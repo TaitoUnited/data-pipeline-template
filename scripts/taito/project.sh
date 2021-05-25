@@ -29,7 +29,7 @@ if [[ ${taito_env} == "local" ]]; then
   taito_containers="${taito_containers} database "
 fi
 taito_static_contents=
-taito_databases="database bi"
+taito_databases="database bidb"
 taito_networks="default"
 
 # Buckets
@@ -37,14 +37,14 @@ taito_buckets="bucket"
 st_bucket_name="$taito_random_name-$taito_env"
 
 # Additional databases
-db_bi_name=${taito_project//-/_}_bi_${taito_env}
-db_bi_port=5001
-db_bi_mgr_username="${db_bi_name}${db_database_username_suffix}"
-db_bi_mgr_secret="${db_bi_name//_/-}-db-mgr.password"
-db_bi_app_username="${db_bi_name}${db_database_app_user_suffix}${db_database_username_suffix}"
-db_bi_app_secret="${db_bi_name//_/-}-db-app.password"
-db_bi_viewer_username="${db_bi_name}${db_database_viewer_user_suffix}${db_database_username_suffix}"
-db_bi_viewer_secret="${db_bi_name//_/-}-db-viewer.password"
+db_bidb_name=${taito_project//-/_}_bidb_${taito_env}
+db_bidb_port=5001
+db_bidb_mgr_username="${db_bidb_name}${db_database_username_suffix}"
+db_bidb_mgr_secret="${db_bidb_name//_/-}-db-mgr.password"
+db_bidb_app_username="${db_bidb_name}${db_database_app_user_suffix}${db_database_username_suffix}"
+db_bidb_app_secret="${db_bidb_name//_/-}-db-app.password"
+db_bidb_viewer_username="${db_bidb_name}${db_database_viewer_user_suffix}${db_database_username_suffix}"
+db_bidb_viewer_secret="${db_bidb_name//_/-}-db-viewer.password"
 
 # ------ Secrets ------
 # Configuration instructions:
@@ -53,7 +53,7 @@ db_bi_viewer_secret="${db_bi_name//_/-}-db-viewer.password"
 # Secrets for all environments
 taito_secrets="
   $db_database_app_secret:random
-  $db_bi_app_secret:random
+  $db_bidb_app_secret:random
 "
 
 # Secrets for local environment only
@@ -66,9 +66,9 @@ taito_remote_secrets="
   $taito_project-$taito_env-storage.accessKeyId:manual
   $taito_project-$taito_env-storage.secretKey:manual
   $db_database_viewer_secret:random
-  $db_bi_viewer_secret:random
+  $db_bidb_viewer_secret:random
   ${db_database_mgr_secret}${taito_cicd_secrets_path}:random
-  ${db_bi_mgr_secret}${taito_cicd_secrets_path}:random
+  ${db_bidb_mgr_secret}${taito_cicd_secrets_path}:random
   cicd-proxy-serviceaccount.key:read/common
 "
 
@@ -79,10 +79,10 @@ taito_cicd_secrets="
   $db_database_ssl_ca_secret
   $db_database_ssl_cert_secret
   $db_database_ssl_key_secret
-  $db_bi_mgr_secret
-  $db_bi_ssl_ca_secret
-  $db_bi_ssl_cert_secret
-  $db_bi_ssl_key_secret
+  $db_bidb_mgr_secret
+  $db_bidb_ssl_ca_secret
+  $db_bidb_ssl_cert_secret
+  $db_bidb_ssl_key_secret
 "
 
 # Secrets required by CI/CD tests

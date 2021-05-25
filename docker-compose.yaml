@@ -91,9 +91,9 @@ services:
     environment:
       DATABASE_DIALECT: postgresql+psycopg2
       DATABASE_HOST: data-pipeline-template-database
-      DATABASE_PORT: ${db_bi_port}
-      DATABASE_DB: ${db_bi_name}
-      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PORT: ${db_bidb_port}
+      DATABASE_DB: ${db_bidb_name}
+      DATABASE_USER: ${db_bidb_app_username}
       DATABASE_PASSWORD: ${taito_default_password}
       REDIS_HOST: data-pipeline-template-redis
       REDIS_PORT: 6379
@@ -112,9 +112,9 @@ services:
       SUPERSET_LOAD_EXAMPLES: 'yes' # Set to 'yes' or 'no'
       DATABASE_DIALECT: postgresql+psycopg2
       DATABASE_HOST: data-pipeline-template-database
-      DATABASE_PORT: ${db_bi_port}
-      DATABASE_DB: ${db_bi_name}
-      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PORT: ${db_bidb_port}
+      DATABASE_DB: ${db_bidb_name}
+      DATABASE_USER: ${db_bidb_app_username}
       DATABASE_PASSWORD: ${taito_default_password}
       REDIS_HOST: data-pipeline-template-redis
       REDIS_PORT: 6379
@@ -133,9 +133,9 @@ services:
     environment:
       DATABASE_DIALECT: postgresql+psycopg2
       DATABASE_HOST: data-pipeline-template-database
-      DATABASE_PORT: ${db_bi_port}
-      DATABASE_DB: ${db_bi_name}
-      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PORT: ${db_bidb_port}
+      DATABASE_DB: ${db_bidb_name}
+      DATABASE_USER: ${db_bidb_app_username}
       DATABASE_PASSWORD: ${taito_default_password}
       REDIS_HOST: data-pipeline-template-redis
       REDIS_PORT: 6379
@@ -155,9 +155,9 @@ services:
     environment:
       DATABASE_DIALECT: postgresql+psycopg2
       DATABASE_HOST: data-pipeline-template-database
-      DATABASE_PORT: ${db_bi_port}
-      DATABASE_DB: ${db_bi_name}
-      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PORT: ${db_bidb_port}
+      DATABASE_DB: ${db_bidb_name}
+      DATABASE_USER: ${db_bidb_app_username}
       DATABASE_PASSWORD: ${taito_default_password}
       REDIS_HOST: data-pipeline-template-redis
       REDIS_PORT: 6379
@@ -186,14 +186,14 @@ services:
       - "192.168.0.17:5432:5432"
     secrets:
       - DATABASE_PASSWORD
-      - BI_DATABASE_PASSWORD
+      - BIDB_DATABASE_PASSWORD
     environment:
       POSTGRES_DB: ${db_database_name}
       POSTGRES_USER: ${db_database_app_username}
       POSTGRES_PASSWORD_FILE: /run/secrets/DATABASE_PASSWORD
-      BI_DB: ${db_bi_name}
-      BI_USER: ${db_bi_app_username}
-      BI_PASSWORD_FILE: /run/secrets/BI_DATABASE_PASSWORD
+      BIDB_DB: ${db_bidb_name}
+      BIDB_USER: ${db_bidb_app_username}
+      BIDB_PASSWORD_FILE: /run/secrets/BIDB_DATABASE_PASSWORD
     volumes:
       - "./database:/docker-entrypoint-initdb.d:delegated"
 
@@ -216,8 +216,8 @@ services:
 secrets:
   DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_database_app_secret}
-  BI_DATABASE_PASSWORD:
-    file: ./secrets/${taito_env}/${db_bi_app_secret}
+  BIDB_DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_bidb_app_secret}
 
 networks:
   default:

@@ -10,4 +10,5 @@
 taito_app_url=http://localhost:9999
 
 # Connect to database port exposed in docker-compose.yaml
-db_database_external_port=6000
+db_database_external_port=5432
+db_bidb_external_port=5432

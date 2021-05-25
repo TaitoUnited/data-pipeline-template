@@ -103,8 +103,8 @@ services:
 secrets:
   DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_database_app_secret}
-  BI_DATABASE_PASSWORD:
-    file: ./secrets/${taito_env}/${db_bi_app_secret}
+  BIDB_DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_bidb_app_secret}
 
 networks:
   default:
