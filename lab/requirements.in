@@ -1,0 +1,14 @@
+azure-eventgrid
+azure-storage-blob
+azure-storage-queue
+boto3
+google-cloud-storage
+jupyter-module-loader
+minio
+msal
+pandas
+psycopg2-binary
+pydantic
+python-json-logger
+requests
+sqlalchemy

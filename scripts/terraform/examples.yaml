@@ -1,0 +1,28 @@
+# ----------------------------------------------------------
+# Permisisions
+# ----------------------------------------------------------
+
+settings:
+  namespace:
+    roles:
+      - name: taito-developer
+        subjects:
+          - user:john.doe@mydomain.com
+          - user:jane.doe@mydomain.com
+      - name: taito-status-viewer
+        subjects:
+          - user:james.toe@mydomain.com
+
+# ----------------------------------------------------------
+# Log alerts
+# ----------------------------------------------------------
+
+settings:
+  alerts:
+    - name: ${taito_project}-${taito_env}-alert-example
+      type: log
+      channels: [ "${taito_messaging_monitoring_channel}" ]
+      rule: >
+        resource.type="k8s_container"
+        resource.labels.namespace_name="${taito_project}-${taito_env}"
+        jsonPayload.message:"Example message"

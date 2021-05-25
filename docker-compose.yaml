@@ -1,0 +1,223 @@
+# This file is used to run your application locally with Docker Compose
+
+version: '3.8'
+services:
+  data-pipeline-template-ingress:
+    container_name: data-pipeline-template-ingress
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "127.0.0.1:9999:80"
+    volumes:
+      - "./docker-nginx.conf:/etc/nginx/nginx.conf:delegated"
+
+  # "IMPLEMENTATION"
+
+  data-pipeline-template-worker:
+    container_name: data-pipeline-template-worker
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - '8080'
+    volumes:
+      - "./worker:/develop:delegated"
+    environment:
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_database_port}
+      DATABASE_NAME: ${db_database_name}
+      DATABASE_USER: ${db_database_app_username}
+      DATABASE_POOL_MIN: '1'
+      DATABASE_POOL_MAX: '10'
+      DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
+      DATABASE_SSL_CLIENT_CERT_ENABLED: ${db_database_ssl_client_cert_enabled}
+      DATABASE_SSL_SERVER_CERT_ENABLED: ${db_database_ssl_server_cert_enabled}
+      STORAGE_TYPE: s3
+      STORAGE_ENDPOINT: data-pipeline-template-storage:9000
+      STORAGE_ACCESS_KEY: minio
+      STORAGE_SECRET_KEY: ${taito_default_password}
+      STORAGE_BUCKET: bucket
+
+  # "LAB: Jupyter Lab"
+
+  data-pipeline-template-lab:
+    container_name: data-pipeline-template-lab
+    build:
+      context: ./lab
+      dockerfile: ${dockerfile}
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "8888"
+    volumes:
+      - "./lab/common:/home/jovyan/common:delegated"
+      - "./lab/lessons:/home/jovyan/lessons:delegated"
+      - "./lab/work:/home/jovyan/work:delegated"
+    environment:
+      JUPYTER_OPTIONS: --LabApp.token='' # Disables authentication
+      COMMON_URL: http://localhost:8029
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_database_port}
+      DATABASE_NAME: ${db_database_name}
+      DATABASE_USER: ${db_database_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
+      STORAGE_TYPE: s3
+      STORAGE_ENDPOINT: data-pipeline-template-storage:9000
+      STORAGE_ACCESS_KEY: minio
+      STORAGE_SECRET_KEY: ${taito_default_password}
+      STORAGE_BUCKET: bucket
+
+  # "BI: Superset BI"
+
+  data-pipeline-template-bi:
+    container_name: data-pipeline-template-bi
+    build:
+      context: ./bi
+      dockerfile: ${dockerfile}
+    command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
+    restart: unless-stopped
+    networks:
+      - default
+    depends_on:
+      - data-pipeline-template-database
+    ports:
+      - 8080
+    environment:
+      DATABASE_DIALECT: postgresql+psycopg2
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_bi_port}
+      DATABASE_DB: ${db_bi_name}
+      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
+      REDIS_HOST: data-pipeline-template-redis
+      REDIS_PORT: 6379
+
+  data-pipeline-template-biinit:
+    container_name: data-pipeline-template-biinit
+    build:
+      context: ./bi
+      dockerfile: ${dockerfile}
+    command: ["/app/docker/docker-init.sh"]
+    networks:
+      - default
+    depends_on:
+      - data-pipeline-template-database
+    environment:
+      SUPERSET_LOAD_EXAMPLES: 'yes' # Set to 'yes' or 'no'
+      DATABASE_DIALECT: postgresql+psycopg2
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_bi_port}
+      DATABASE_DB: ${db_bi_name}
+      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
+      REDIS_HOST: data-pipeline-template-redis
+      REDIS_PORT: 6379
+
+  data-pipeline-template-biworker:
+    container_name: data-pipeline-template-biworker
+    build:
+      context: ./bi
+      dockerfile: ${dockerfile}
+    command: ["/app/docker/docker-bootstrap.sh", "worker"]
+    restart: unless-stopped
+    networks:
+      - default
+    depends_on:
+      - data-pipeline-template-database
+    environment:
+      DATABASE_DIALECT: postgresql+psycopg2
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_bi_port}
+      DATABASE_DB: ${db_bi_name}
+      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
+      REDIS_HOST: data-pipeline-template-redis
+      REDIS_PORT: 6379
+
+  data-pipeline-template-bibeat:
+    container_name: data-pipeline-template-bibeat
+    build:
+      context: ./bi
+      dockerfile: ${dockerfile}
+    command: ["/app/docker/docker-bootstrap.sh", "beat"]
+    restart: unless-stopped
+    user: "root"
+    networks:
+      - default
+    depends_on:
+      - data-pipeline-template-database
+    environment:
+      DATABASE_DIALECT: postgresql+psycopg2
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_PORT: ${db_bi_port}
+      DATABASE_DB: ${db_bi_name}
+      DATABASE_USER: ${db_bi_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
+      REDIS_HOST: data-pipeline-template-redis
+      REDIS_PORT: 6379
+
+  # "DATA RESOURCES"
+
+  data-pipeline-template-redis:
+    container_name: data-pipeline-template-redis
+    image: bitnami/redis:6.0
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "6379"
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'yes'
+      REDIS_AOF_ENABLED: 'no'
+
+  data-pipeline-template-database:
+    container_name: data-pipeline-template-database
+    image: postgres:12
+    restart: unless-stopped
+    networks:
+      - default
+    ports:
+      - "192.168.0.17:5432:5432"
+    secrets:
+      - DATABASE_PASSWORD
+      - BI_DATABASE_PASSWORD
+    environment:
+      POSTGRES_DB: ${db_database_name}
+      POSTGRES_USER: ${db_database_app_username}
+      POSTGRES_PASSWORD_FILE: /run/secrets/DATABASE_PASSWORD
+      BI_DB: ${db_bi_name}
+      BI_USER: ${db_bi_app_username}
+      BI_PASSWORD_FILE: /run/secrets/BI_DATABASE_PASSWORD
+    volumes:
+      - "./database:/docker-entrypoint-initdb.d:delegated"
+
+  data-pipeline-template-storage:
+    container_name: data-pipeline-template-storage
+    image: minio/minio
+    restart: unless-stopped
+    command: server /develop
+    working_dir: /develop
+    networks:
+      - default
+    ports:
+      - "9000"
+    volumes:
+      - "./storage:/develop:delegated"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: ${taito_default_password}
+
+secrets:
+  DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_database_app_secret}
+  BI_DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_bi_app_secret}
+
+networks:
+  default:

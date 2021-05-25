@@ -1,0 +1,75 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches:
+      - dev
+      - test
+      - uat
+      - stag
+      - canary
+      - prod
+      - master
+      - main
+
+jobs:
+  pipeline:
+    name: Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    container:
+      image: taitounited/taito-cli:ci-azure
+      env:
+        taito_mode: ci
+        taito_image: taitounited/taito-cli:ci-azure
+        taito_ci_phases:
+        IMAGE_TAG: ${{ github.sha }}
+        DOCKER_HOST_PATH: /home/runner/work/data-pipeline-template/data-pipeline-template
+        AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+    steps:
+      # NOTE: GitHub actions runs all jobs on separate virtual machines by
+      # default. Currently all steps are run in a single job to avoid pulling
+      # Taito CLI image multiple times. However, if you are using a self-hosted
+      # runner to execute the build, you could run these as separate jobs
+      # (see bitbucket-pipelines.yml as an example).
+
+      # Init
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Set environment
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Set authentication
+        run: |
+          if [ ! -z "${{ secrets[format('{0}_AZURE_CLIENT_ID', env.BRANCH)] }}" ]; then
+            echo "AZURE_CLIENT_ID=${{ secrets[format('{0}_AZURE_CLIENT_ID', env.BRANCH)] }}" >> $GITHUB_ENV
+            echo "AZURE_CLIENT_SECRET=${{ secrets[format('{0}_AZURE_CLIENT_SECRET', env.BRANCH)] }}" >> $GITHUB_ENV
+          fi # END AZURE_CLIENT_ID
+
+      # Prepare build
+      - run: taito build prepare:$BRANCH $IMAGE_TAG
+
+      # Prepare artifacts for deployment
+      # TODO: Should be run parallel
+      # - run: taito artifact prepare:bi:$BRANCH $IMAGE_TAG
+      # - run: taito artifact prepare:lab:$BRANCH $IMAGE_TAG
+      - run: taito artifact prepare:worker:$BRANCH $IMAGE_TAG
+
+      # Deploy changes to target environment
+      - run: taito db deploy:$BRANCH
+      - run: taito deployment deploy:$BRANCH $IMAGE_TAG
+
+      # Test and verify deployment
+      - run: taito deployment wait:$BRANCH
+      - run: taito test:$BRANCH
+      - run: taito deployment verify:$BRANCH
+
+      # Release artifacts
+      # TODO: Should be run parallel
+      # - run: taito artifact release:bi:$BRANCH $IMAGE_TAG
+      # - run: taito artifact release:lab:$BRANCH $IMAGE_TAG
+      - run: taito artifact release:worker:$BRANCH $IMAGE_TAG
+
+      # Release build
+      - run: taito build release:$BRANCH

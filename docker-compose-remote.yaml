@@ -1,0 +1,110 @@
+# This file is used to run your application on remote servers with
+# Docker Compose. It is not needed if you use Kubernetes or cloud services
+# instead.
+
+# TODO: health checks
+
+version: '3.9'
+x-logging:
+  &default-logging
+  options:
+    max-size: '100m'
+    max-file: '10'
+  driver: json-file
+
+services:
+  data-pipeline-template-${taito_env}-ingress:
+    container_name: data-pipeline-template-${taito_env}-ingress
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    logging: *default-logging
+    networks:
+      - default
+    ports:
+      - "_PORT_:80"
+      # If you want to directly expose this ingress to browser, use the
+      # following settings and configure SSL in docker-nginx.conf.
+      # - "80:80"
+      # - "443:443"
+    secrets:
+      - BASIC_AUTH_HTPASSWD
+    volumes:
+      - "./docker-nginx.conf:/etc/nginx/nginx.conf:delegated"
+
+  # "IMPLEMENTATION"
+
+  data-pipeline-template-worker:
+    container_name: data-pipeline-template-worker
+    image: local/data-pipeline-template/worker:_IMAGE_TAG_
+    restart: unless-stopped
+    logging: *default-logging
+    networks:
+      - default
+    ports:
+      - '8080'
+    environment:
+      DATABASE_HOST: 172.17.0.1  # For docker db: data-pipeline-template-${taito_env}-database
+      DATABASE_PORT: ${db_database_port}
+      DATABASE_NAME: ${db_database_name}
+      DATABASE_USER: ${db_database_app_username}
+      DATABASE_POOL_MIN: '1'
+      DATABASE_POOL_MAX: '10'
+      DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
+      DATABASE_SSL_CLIENT_CERT_ENABLED: ${db_database_ssl_client_cert_enabled}
+      DATABASE_SSL_SERVER_CERT_ENABLED: ${db_database_ssl_server_cert_enabled}
+      STORAGE_TYPE: s3
+      STORAGE_ENDPOINT: data-pipeline-template-storage:9000
+      STORAGE_ACCESS_KEY: minio
+      STORAGE_SECRET_KEY: ${taito_default_password}
+      STORAGE_BUCKET: bucket
+
+  # NOTE: If you use data-pipeline-template-${taito_env}-database instead of external database,
+  # do the following:
+  # - Uncomment the data-pipeline-template-${taito_env}-database in this file.
+  # - Modify the following settings in taito-config.sh:
+  #     db_database_mgr_username="$db_database_app_username"
+  #     db_database_mgr_secret="$db_database_app_secret"
+  # - In local-ci.sh, move 'db-deploy' step to be executed after the
+  #   'deployment-deploy' step, since database must be running during db deploy.
+  # - Answer 'no' to the database creation step during 'taito env apply:ENV'.
+
+  # data-pipeline-template-${taito_env}-database:
+  #   container_name: data-pipeline-template-${taito_env}-database
+  #   image: postgres:12
+  #   restart: unless-stopped
+  #   logging: *default-logging
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "5432:5432"
+  #   secrets:
+  #     - DATABASE_PASSWORD
+  #     - DATABASE_MGR_PASSWORD
+  #   environment:
+  #     POSTGRES_DB: ${db_database_name}
+  #     POSTGRES_USER: ${db_database_app_username}
+  #     POSTGRES_PASSWORD_FILE: /run/secrets/DATABASE_PASSWORD
+  #     MYSQL_ROOT_PASSWORD_FILE /run/secrets/DATABASE_MGR_PASSWORD
+  #   volumes:
+  #     - "./database:/docker-entrypoint-initdb.d:delegated"
+  #     - "./database-db/mount:/var/lib/postgresql/data"
+
+  # "INFRASTRUCTURE"
+
+  # watchtower:
+  #   image: index.docker.io/v2tec/watchtower
+  #   restart: unless-stopped
+  #   logging: *default-logging
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./watchtower-config.json:/config.json
+  #   command: --interval 60
+
+secrets:
+  DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_database_app_secret}
+  BI_DATABASE_PASSWORD:
+    file: ./secrets/${taito_env}/${db_bi_app_secret}
+
+networks:
+  default:

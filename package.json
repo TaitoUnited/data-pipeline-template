@@ -1,0 +1,126 @@
+{
+  "name": "data-pipeline-template",
+  "scripts": {
+    "install-clean": "echo '# Nothing to cleanup'",
+    "install-ci": "echo '# Nothing to install'",
+    "install-dev": "echo '# Nothing to install'",
+    "install-all": "echo '# Nothing to install'",
+    "taito-init": "taito -z ${taito_options} init:${taito_env} && npm run import-db-data",
+    "taito-init:clean": "taito -z ${taito_options} init:${taito_env} --clean && npm run import-db-data && npm run clean:storage",
+    "import-db-data": "if [ -f ./database/data/${taito_env}.sql ]; then taito ${taito_options} db import:${taito_env} ./database/data/${taito_env}.sql; fi",
+    "taito-host-db-generate": "rm -rf docs/database &> /dev/null || true && mkdir -p docs/database && docker run --network $(echo ${PWD##*/} | tr '[:upper:]' '[:lower:]')_default -v `pwd`/docs/database:/output schemaspy/schemaspy:6.1.0 -t pgsql11 --port 5432 -u ${db_database_app_username} -db ${db_database_name} -host ${taito_project}-database -p ${taito_default_password}",
+    "clean:storage": "if [ ${taito_env} = 'local' ] && [ -d storage ]; then echo Cleaning storage; rm -rf ./storage/bucket/*; rm -rf ./storage/.minio.sys/buckets/bucket/*/; fi",
+    "info:local": "yes | taito ${taito_options} secret show:${taito_env}",
+    "info": "yes | taito ${taito_options} secret show:${taito_env} basic-auth",
+    "lint": "echo Running lint locally && npm run lint:worker",
+    "lint:worker": "cd worker && echo 'TODO: lint'",
+    "unit": "echo Running unit tests locally && npm run unit:worker",
+    "unit:worker": "cd worker && echo 'TODO: unit'",
+    "test": "npm run test:worker",
+    "test:worker": "echo DISABLED TOOD taito ${taito_options} util test:worker:${taito_env}",
+    "code-check": "docker run --interactive --tty --rm --env CODECLIMATE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate engines:install && docker run --interactive --tty --rm --env CODECLIMATE_CODE=\"$PWD\" --volume \"$PWD\":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate analyze",
+    "taito-host-code-check": "npm run code-check",
+    "_dep-check_comment": "TODO how to pass -u argument from dep-check to dep-check:TARGET?",
+    "project-show": "cat PROJECT.md | sed -n -e '/^## Contacts.*$/,/^#.*$/{ /^## Contacts.*$/d; /^#.*$/d; p; }'",
+    "precommit:branch": "if git-branch-is -q test || git-branch-is -q uat || git-branch-is -q qa || git-branch-is -q stag || git-branch-is -q canary || git-branch-is -q cana || git-branch-is -q prod || git-branch-is -q master; then echo 'ERROR: You cannot commit changes directly to this environment branch. Only fast-forward merge is allowed.' && echo && exit 1; fi",
+    "precommit:lint": "echo 'SKIP: Skipping linting on commit since we are already continuously linting during development.'",
+    "release-pre:prod": "semantic-release --dry-run",
+    "release-post:prod": "semantic-release --no-ci"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "if [ \"$taito_mode\" != 'ci' ]; then npm run precommit:branch && npm run precommit:lint; fi",
+      "pre-push": "if [ \"$taito_mode\" != 'ci' ]; then npm-run-all --parallel lint unit; fi"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "rules": {
+      "type-enum": [
+        2,
+        "always",
+        [
+          "wip",
+          "feat",
+          "fix",
+          "docs",
+          "style",
+          "refactor",
+          "perf",
+          "test",
+          "revert",
+          "build",
+          "ci",
+          "chore"
+        ]
+      ]
+    }
+  },
+  "release": {
+    "npmPublish": false,
+    "analyzeCommits": {
+      "preset": "angular",
+      "releaseRules": [
+        {
+          "type": "feat",
+          "release": "minor"
+        },
+        {
+          "type": "fix",
+          "release": "patch"
+        },
+        {
+          "type": "docs",
+          "release": "patch"
+        },
+        {
+          "type": "style",
+          "release": "patch"
+        },
+        {
+          "type": "refactor",
+          "release": "patch"
+        },
+        {
+          "type": "perf",
+          "release": "patch"
+        },
+        {
+          "type": "test",
+          "release": "patch"
+        },
+        {
+          "type": "revert",
+          "release": "patch"
+        },
+        {
+          "type": "build",
+          "release": "patch"
+        },
+        {
+          "type": "ci",
+          "release": "patch"
+        },
+        {
+          "type": "chore",
+          "release": "patch"
+        }
+      ]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TaitoUnited/data-pipeline-template.git"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "git-branch-is": "^4.0.0",
+    "husky": "^4.3.5",
+    "npm-run-all": "^4.1.5",
+    "semantic-release": "^16.0.4"
+  }
+}

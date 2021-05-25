@@ -1,0 +1,5 @@
+# Overrides for prod environment
+
+settings:
+  backupEnabled: false
+  uptimeEnabled: false

@@ -1,0 +1,348 @@
+# ----------------------------------------------------------
+# Service examples
+# ----------------------------------------------------------
+
+  services:
+    admin:
+      paths:
+        - path: /admin
+      cpuRequest: 2m
+      memoryRequest: 2Mi
+
+    lab:
+      paths:
+        - path: /lab
+          clientMaxBodySize: 10m
+      egress:
+        - ip: '${db_database_real_host}/32'
+        - ip: public
+      livenessInitialDelay: 120
+      livenessCommand:
+        - python3
+        - --version
+      tty: true
+      secretEnv:
+        DATABASE_PASSWORD: ${db_database_app_secret}
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+      env:
+        DATABASE_HOST: '${db_database_real_host}'
+        DATABASE_PORT: '${db_database_real_port}'
+        DATABASE_NAME: ${db_database_name}
+        DATABASE_USER: ${db_database_app_username}
+        DATABASE_POOL_MIN: '0'
+        DATABASE_POOL_MAX: '5'
+        DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
+        DATABASE_SSL_CLIENT_CERT_ENABLED: ${db_database_ssl_client_cert_enabled}
+        DATABASE_SSL_SERVER_CERT_ENABLED: ${db_database_ssl_server_cert_enabled}
+        STORAGE_TYPE: azure
+        STORAGE_ENDPOINT:
+        STORAGE_BUCKET: ${st_bucket_name}
+
+# ----------------------------------------------------------
+# Path attributes
+# ----------------------------------------------------------
+
+  # NOTE: These examples are for nginx-ingress controller. If some other
+  # ingress controller is being used, it might not support all of these
+  # options.
+
+  serviceDefaults:
+    # BASIC AUTH: enabled/disabled
+    basicAuthEnabled: false
+
+    # MODSECURITY: modsecurity with the default OWASP Core Rule Set
+    modsecurityEnabled: true
+
+    # LIMIT BY IP/LOCATION: https://en.wikipedia.org/wiki/ISO_3166-2
+    allowedCountries: ["FI", "SE", "NO", "DK", "EE", "US"]
+    # OR ALTERNATIVELY blockedCountries: [
+    #   "TH", "VN", "ID", "IN", "CN", "BR", "RU", "UA", "TR", "IQ"
+    # ]
+    # OR ALTERNATIVELY allowedCidrs: [
+    #   "123.123.123.123/24", "124.124.124.124/32"
+    # ]
+    # NOTE: You can block CIDRs in nginx-ingress config map
+
+  services:
+    server:
+      paths:
+        - path: /api
+
+        # LOGIN: /api/login with rate limited login attempts
+        # rate limit: Limit number of requests from a single IP address
+        - path: /api/login
+          rewriteTarget: /login
+          limitRpm: 5               # 5 requests per minute
+              # NOTE: Actually rate limit is a lot higher as 5x bursts are
+              # accepted and there are also multiple nginx replicas that each
+              # limit separately
+
+        # UPLOAD: /api/upload with a large request body and connection limit
+        # request size: Use a large request body size limit
+        # connection limit: Limit number of connections from a single IP address
+        - path: /api/upload
+          rewriteTarget: /upload
+          clientMaxBodySize: 100m   # Allow 100 MB file
+          limitConnections: 5       # Max 5 connections from a single IP address
+              # NOTE: Actually connection limit is a lot higher as there are
+              # multiple nginx replicas that each limit separately
+
+        # DOWNLOAD: /api/download with bandwith and connection limit
+        # rate limit: Limit network bandwith for very large files
+        # connection limit: Limit number of connections from a single IP address
+        - path: /api/download
+          rewriteTarget: /download
+          limitRateAfter: 102400    # Start limiting after 100 MB (102400 KB)
+          limitRate: 100            # Limit bandwith to 100 KB/s
+          limitConnections: 5       # Max 5 connections from a single IP address
+              # NOTE: Actually connection limit is a lot higher as there are
+              # multiple nginx replicas that each limit separately
+
+        # LONG PROCESSING: /api/process with a large read timeout and conn limit
+        # read timeout: Allow long processing on server before response is sent
+        # connection limit: Limit number of connections from a single IP address
+        - path: /api/process
+          rewriteTarget: /process
+          readTimeout: 120          # 2 minutes
+          limitConnections: 5       # Max 5 connections from a single IP address
+              # NOTE: Actually connection limit is a lot higher as there are
+              # multiple nginx replicas that each limit separately
+
+        # TODO: Sticky sessions example
+
+        # TODO: OAUTH example
+
+        # BASIC AUTH: /api/private with a path specific basic auth secret
+        # IP LIMIT: allow connections from a specific IP only
+        - path: /api/private
+          rewriteTarget: /private
+          basicAuthEnabled: true
+          basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-private-auth
+          allowedCidrs: [ "124.124.124.124/32" ]
+
+        # MODSECURITY: /api/special with custom modsecurity rules
+        # https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual-%28v2.x%29#configuration-directives
+        - path: /api/special
+          rewriteTarget: /special
+          modsecurityRules: |
+            SecRuleEngine On
+            SecRequestBodyAccess On
+            SecAuditEngine RelevantOnly
+            SecAuditLogParts ABCIJDEFHZ
+            SecAuditLog /dev/stdout
+            Include /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf
+
+        # TODO: More examples
+
+# ----------------------------------------------------------
+# Networking rules
+# ----------------------------------------------------------
+
+  services:
+    server:
+      # INGRESS: Server can be accessed by ingress controller (paths been set)
+      paths:
+        - path: /api
+      # INGRESS: Server can be accessed by some-application
+      ingress:
+        - app: some-application
+
+    # EGRESS: Server allowed to access storage service, .google.com, and some IP
+    # NOTE: If DOMAIN_PROXY environment variable is set, use it as a http proxy
+    # to access the domain.
+    server:
+      egress:
+        - fullname: ${taito_project}-${taito_env}-storage
+        - domain: .google.com
+        - ip: 216.58.207.227/32
+
+    # EGRESS: Storage allowed to access any public ip (not recommended)
+    storage:
+      egress:
+        - ip: public  # any, private, public, or CIDR (e.g. 216.58.207.227/32)
+
+# Disable all networking rules (not recommended)
+full-stack:
+  networkPolicyEnabled: false
+
+# ----------------------------------------------------------
+# CPU/MEM resources
+# ----------------------------------------------------------
+
+    # SET CPU/MEM RESOURCES:
+    server:
+      cpuRequest: 100m      # request for 0.1 CPU
+      cpuLimit: 500m        # limit to 0.5 CPU
+      memoryRequest: 128Mi  # request for 128 MB
+      memoryLimit: 512Mi    # limit to 512 MB
+
+# ----------------------------------------------------------
+# Horizontal and vertical scaling
+# ----------------------------------------------------------
+
+# TODO
+
+# ----------------------------------------------------------
+# Node selector
+# ----------------------------------------------------------
+
+  # Run all containers on specific Kubernetes nodes by default
+  serviceDefaults:
+    nodeSelector:
+      cloud.google.com/gke-nodepool: pool-1
+
+  # Run worker container on different Kubernetes nodes
+  services:
+    worker:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: worker-pool-1
+        accelerator: nvidia-tesla-p100
+
+# ----------------------------------------------------------
+# Health checks
+# ----------------------------------------------------------
+
+    # CUSTOM HEALTH CHECK PATH AND INITIAL DELAY
+    # (livenessPath is /healthz by default)
+    server:
+      livenessPath: /healthcheck  # /healthz by default
+      livenessInitialDelay: 120   # seconds
+
+    # CUSTOM HEALTH CHECK COMMAND
+    # (runs 'my-cli check' inside the container)
+    server:
+      livenessCommand:
+        - my-cli
+        - check
+
+    # DISABLE HEALTH CHECKS (not recommended!)
+    server:
+      livenessDisabled: true
+
+# ----------------------------------------------------------
+# Cron jobs
+# ----------------------------------------------------------
+
+    # SIMPLE CRON JOB EXAMPLE:
+    # Scheduler polls server endpoint based on a cron schedule
+    scheduler:
+      type: job
+      image: buildpack-deps:curl
+      cpuRequest: 1m
+      memoryRequest: 1Mi
+      runAsUser: 2
+      runAsGroup: 2
+      secretEnv:
+        SCHEDULER_SECRET: ${taito_project}-${taito_env}-scheduler.secret
+      cronJobs:
+        - name: schedulerjob
+          schedule: "0 2 * * *"
+          concurrencyPolicy: Forbid # Forbid or Allow
+          args:
+            - /bin/sh
+            - -c
+            - curl -sS -H "X-Secret:$$SCHEDULER_SECRET" http://${taito_project}-${taito_target_env}-server:8080/posts?offset=0&limit=1
+
+    # RE-USE SETTINGS OF AN ANOTHER SERVICE:
+    # Re-use server Docker image and settings for running cron jobs also.
+    # Add additional JOB_VARIABLE and JOB_SECRET for cron job.
+    server:
+      ...
+      ...
+      cronJobs:
+        - name: examplejob
+          schedule: "30 2 * * *"
+          concurrencyPolicy: Forbid # Forbid or Allow
+          args:
+            - /bin/sh
+            - -c
+            - date; echo Hello from server
+          secret:
+            JOB_SECRET: ${taito_project}-${taito_env}-job.secret
+          env:
+            JOB_VARIABLE: 1234
+
+# ----------------------------------------------------------
+# External services (dedicated IP address, any port)
+# ----------------------------------------------------------
+
+  # NOTE: Dedicated IP address might not be required as nginx-ingress
+  # supports also tcp and udp connections.
+  services:
+    mail:
+      type: external
+      port: 110
+      targetPort: 8080
+      ...
+      ...
+
+# ----------------------------------------------------------
+# Multiple ports
+# ----------------------------------------------------------
+
+  services:
+    mail:
+      ports:
+       - port: 110
+         targetPort: 8080
+       - port: 995
+         targetPort: 9080
+
+# ----------------------------------------------------------
+# Volumes, persistence, and init commands
+# ----------------------------------------------------------
+
+  # ENABLE PERSISTENCE
+  persistence:
+    enabled: true
+    # a) Either use an existing volume claim:
+    existingClaim: existing-pvc
+    # b) Or create new volume claim:
+    accessMode: ReadWriteOnce # NOTE: GCP does not support ReadWriteMany
+    size: 4Gi
+    storageClass: fast
+    # volumeName: existing-volume (optional)
+
+  # INIT FILE PERMISSIONS, USE THE DISK
+  services:
+    database:
+      ...
+      # Avoid duplicate mount errors by using Recreate instead of RollingUpdate
+      strategyType: Recreate
+      # Give volume write permissions for root(0) group
+      fsGroup: 0
+      initCommand: 'chmod g+w /data/db'
+      # Optionally place the on the same node as another pod using the same disk
+      # placementSameAs: database2
+      # placementPreferSameAs: database2
+      # Mount /data/db and /data/backup to the external disk
+      persistentVolumeMounts:
+        - mountPath: /data/db
+          volumePath: data-db-${taito_env}
+          readOnly: false
+        - mountPath: /data/backup
+          volumePath: data-backup-${taito_env}
+          readOnly: false
+          # TODO: add support for this
+          persistentVolumeClaim: another-existing-pvc # Use another disk than the default
+      ...
+
+# ----------------------------------------------------------
+# Database proxy (GCP cloud sql proxy)
+# ----------------------------------------------------------
+
+  services:
+    server:
+      # Database proxy config
+      db:
+        useProxy: ${gcp_db_proxy_enabled}
+        instance: ${taito_zone}:${taito_provider_region}:${db_database_instance}
+        port: ${db_database_real_port}
+        proxySecret: ${taito_provider_db_proxy_secret}
+
+# ----------------------------------------------------------
+# Sidecars
+# ----------------------------------------------------------
+
+# TODO

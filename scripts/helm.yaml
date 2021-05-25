@@ -1,0 +1,79 @@
+# Here you can configure all your Kubernetes resources with a
+# developer-friendly YAML format
+
+# NOTE: See helm/values.yaml for a list of all service attributes
+# and helm/examples.yaml for some examples.
+
+global:
+  domain: ${taito_domain}
+  url: https://${taito_domain}
+  publicPort: 443
+  logProvider: ${taito_logging_provider}
+  logFormat: ${taito_logging_format}
+  logLevel: info    # trace, debug, info, warn, error, fatal
+  registry: ${taito_container_registry}
+  imagePullPolicy: ''
+  debug: 'false'
+
+full-stack:
+  networkPolicyEnabled: true
+  networkPolicyProvider: ${kubernetes_network_policy_provider}
+
+  ingress:
+    class: nginx
+    namespace: ingress-nginx
+    domains:
+      - name: ${taito_domain}
+        altDomains:
+          - name: ${taito_altdomain}
+
+  serviceDefaults:
+    # Auth and security
+    basicAuthEnabled: ${taito_basic_auth_enabled}
+    basicAuthHtpasswdSecret: ${taito_project}-${taito_env}-basic-auth
+    modsecurityEnabled: true
+    serviceAccountName: ${taito_project}-${taito_env}
+    # Resources
+    cpuRequest: 100m
+    cpuLimit: 500m
+    memoryRequest: 128Mi
+    memoryLimit: 512Mi
+    # Horizontal scaling
+    replicas: ${kubernetes_replicas}
+    minReplicas: ${kubernetes_replicas}
+    # Environment variables
+    env:
+      COMMON_ENV: ${taito_env}
+
+  services:
+
+    worker:
+      egress:
+        - ip: '${db_database_real_host}/32'
+        - ip: public
+      livenessCommand:
+        - python3
+        - --version
+      tty: true
+      db: # For old gcp environments
+         useProxy: ${gcp_db_proxy_enabled} # For old gcp environments
+         instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
+         port: ${db_database_real_port} # For old gcp environments
+         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments      
+      secretEnv:
+        DATABASE_PASSWORD: ${db_database_app_secret}
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+      env:
+        DATABASE_HOST: '${db_database_real_host}'
+        DATABASE_PORT: '${db_database_real_port}'
+        DATABASE_NAME: ${db_database_name}
+        DATABASE_USER: ${db_database_app_username}
+        DATABASE_POOL_MIN: '0'
+        DATABASE_POOL_MAX: '5'
+        DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
+        DATABASE_SSL_CLIENT_CERT_ENABLED: ${db_database_ssl_client_cert_enabled}
+        DATABASE_SSL_SERVER_CERT_ENABLED: ${db_database_ssl_server_cert_enabled}
+        STORAGE_TYPE: azure
+        STORAGE_ENDPOINT:
+        STORAGE_BUCKET: ${st_bucket_name}

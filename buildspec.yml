@@ -1,0 +1,35 @@
+version: 0.2
+env:
+  variables:
+    taito_mode: "ci"
+
+phases:
+  pre_build:
+    commands:
+      # Determine ENV and IMAGE_TAG
+      - export ENV=$(git branch -a --contains HEAD | sed -n 2p | awk '{ printf $1 }' | xargs echo $CODEBUILD_WEBHOOK_HEAD_REF | awk '{ printf $1 }' | sed 's/.*\///')
+      - export IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - export taito_image='${_TEMPLATE_DEFAULT_TAITO_IMAGE}'
+      # TODO: Cancel other ongoing builds for $ENV
+      # - taito deployment cancel:$ENV $CURRENT_BUILD_ID
+      # Prepare build
+      - taito build prepare:$ENV $IMAGE_TAG
+  build:
+    commands:
+      # Prepare artifacts for deployment (TODO: can be executed parallel)
+      # - taito artifact prepare:bi:$ENV $IMAGE_TAG
+      # - taito artifact prepare:lab:$ENV $IMAGE_TAG
+      - taito artifact prepare:worker:$ENV $IMAGE_TAG
+      # Deploy changes to target environment
+      - taito db deploy:$ENV
+      - taito deployment deploy:$ENV $IMAGE_TAG
+      # Test and verify deployment
+      - taito deployment wait:$ENV
+      - taito test:$ENV
+      - taito deployment verify:$ENV
+      # Release artifacts (TODO: can be executed parallel)
+      # - taito artifact release:bi:$ENV $IMAGE_TAG
+      # - taito artifact release:lab:$ENV $IMAGE_TAG
+      - taito artifact release:worker:$ENV $IMAGE_TAG
+      # Release build
+      - taito build release:$ENV

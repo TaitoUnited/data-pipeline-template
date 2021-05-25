@@ -1,0 +1,123 @@
+# Global settings for all charts
+global:
+  # These are given as command line parameters during build
+  zone:
+    name:
+    provider:
+    providerRegion:
+    providerZone:
+    namespace:
+    resourceNamespace:
+  project:
+    name:
+    company:
+    family:
+    application:
+    suffix:
+  build:
+    version:
+    commit:
+    imageTag:
+  # Common settings
+  logFormat: stackdriver
+  logLevel: info    # trace, debug, info, warn, error, fatal
+  registry: ${taito_container_registry}
+  imagePullPolicy: ''
+  debug: 'false'
+
+full-stack:
+  serviceAccountCreate: false # DEPRECATED
+  networkPolicyEnabled: true
+  networkPolicyProvider: CALICO
+
+  persistence:
+    enabled: false
+    existingClaim:
+    storageClass:
+    # NOTE: Google does not support ReadWriteMany
+    # ReadWriteOnce -> all containers will be placed on the same Kubernetes node
+    accessMode: ReadWriteOnce
+    size: 8Gi
+
+  ingress:
+    tls: true
+    certManagerEnabled: true
+    oldAcmeCertificate: false
+    oldRewritePolicy: false
+
+  serviceDefaults:
+    # Basics
+    image: # For 3rd party container image
+    command:
+    port: 8080
+    tier:
+    livenessPath: /healthz
+    livenessInitialDelay: 3
+    # Paths
+    paths:
+      # - path:
+      #   basicAuthEnabled:
+      #   basicAuthHtpasswdSecret:
+      #   clientMaxBodySize:
+      #   bufferSize:
+      #   requestBuffering:
+      #   connectTimeout:
+      #   sendTimeout:
+      #   readTimeout:
+      #   nextUpstreamTimeout:
+      #   limitRate:
+      #   limitRateAfter:
+      #   rewriteTarget:
+      #   rewriteTargetDisabled:
+    # Path defaults
+    basicAuthEnabled: false
+    basicAuthHtpasswdSecret:
+    clientMaxBodySize: 1k
+    # bufferSize: 4k
+    # requestBuffering: on
+    # connectTimeout: 5
+    # sendTimeout: 60
+    # readTimeout: 60
+    # nextUpstreamTimeout: 0
+    limitRate:
+    limitRateAfter:
+    rewriteTarget:
+    rewriteTargetDisabled:
+    # Security
+    runAsUser:
+    runAsGroup:
+    # Resources
+    cpuRequest: 20m
+    cpuLimit: 100m
+    memoryRequest: 70Mi
+    memoryLimit: 256Mi
+    # Vertical scaling
+    verticalScaleUpdateMode: Off
+    # Horizontal scaling
+    replicas: 2
+    autoscale: false
+    autoscaleCpuPercentage: 70
+    autoscaleMemoryPercentage: 70
+    minReplicas: 2
+    maxReplicas: 5
+    # Placement
+    placementSameAs:
+    placementPreferSameAs:
+    # Sidecar
+    sidecar:
+    # Mounts
+    temporaryVolumeMounts:
+      # - mountPath: /mnt/data
+      #   volumePath: data
+      #   readOnly: false
+    persistentVolumeMounts:
+      # - mountPath: /mnt/data
+      #   volumePath: data
+      #   readOnly: false
+    # Env
+    secrets:
+      # Secrets as mounted files
+    secretEnv:
+      # Secrets as environment variables (not recommended)
+    env:
+      # Environment variables
