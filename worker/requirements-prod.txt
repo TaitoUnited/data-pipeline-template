@@ -15,9 +15,9 @@ azure-storage-blob==12.8.1
     # via -r /tmp/requirements.in
 azure-storage-queue==12.1.6
     # via -r /tmp/requirements.in
-boto3==1.17.79
+boto3==1.17.80
     # via -r /tmp/requirements.in
-botocore==1.20.79
+botocore==1.20.80
     # via
     #   boto3
     #   s3transfer
@@ -42,7 +42,7 @@ cryptography==3.4.7
     #   pyjwt
 google-api-core==1.28.0
     # via google-cloud-core
-google-auth==1.30.0
+google-auth==1.30.1
     # via
     #   google-api-core
     #   google-cloud-core
