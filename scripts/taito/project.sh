@@ -29,12 +29,22 @@ if [[ ${taito_env} == "local" ]]; then
   taito_containers="${taito_containers} database "
 fi
 taito_static_contents=
-taito_databases="database"
+taito_databases="database bi"
 taito_networks="default"
 
 # Buckets
 taito_buckets="bucket"
 st_bucket_name="$taito_random_name-$taito_env"
+
+# Additional databases
+db_bi_name=${taito_project//-/_}_bi_${taito_env}
+db_bi_port=5001
+db_bi_mgr_username="${db_bi_name}${db_database_username_suffix}"
+db_bi_mgr_secret="${db_bi_name//_/-}-db-mgr.password"
+db_bi_app_username="${db_bi_name}${db_database_app_user_suffix}${db_database_username_suffix}"
+db_bi_app_secret="${db_bi_name//_/-}-db-app.password"
+db_bi_viewer_username="${db_bi_name}${db_database_viewer_user_suffix}${db_database_username_suffix}"
+db_bi_viewer_secret="${db_bi_name//_/-}-db-viewer.password"
 
 # ------ Secrets ------
 # Configuration instructions:
