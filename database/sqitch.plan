@@ -1,11 +1,3 @@
 %syntax-version=1.0.0
 %project=data-pipeline-template
 %uri=https://github.com/TaitoUnited/data-pipeline-template/
-
-updated_at_trigger 2019-04-09T15:16:52Z taito <taito@a8158c667797>
-dim_dates 2021-04-01T15:17:35Z taito <taito@e84f94821d69>
-dim_dates_generate 2021-04-01T15:17:35Z taito <taito@e84f94821d69>
-dim_products 2021-04-01T15:17:35Z taito <taito@e84f94821d69>
-dim_stores 2021-04-01T13:17:35Z taito <taito@e84f94821d69>
-fact_sales 2021-04-01T15:17:35Z taito <taito@e84f94821d69>
-view_sales 2021-04-29T07:02:07Z taito <taito@c1a1f85f33a2> # add view sales
