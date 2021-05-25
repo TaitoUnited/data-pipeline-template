@@ -45,6 +45,8 @@ db_bidb_app_username="${db_bidb_name}${db_database_app_user_suffix}${db_database
 db_bidb_app_secret="${db_bidb_name//_/-}-db-app.password"
 db_bidb_viewer_username="${db_bidb_name}${db_database_viewer_user_suffix}${db_database_username_suffix}"
 db_bidb_viewer_secret="${db_bidb_name//_/-}-db-viewer.password"
+db_bidb_default_username="${db_bidb_mgr_username}"
+db_bidb_default_secret="${db_bidb_mgr_secret}"
 
 # ------ Secrets ------
 # Configuration instructions:
