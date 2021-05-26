@@ -54,21 +54,13 @@ Import development data to database:
     . ./taito-config.sh   # Set environment variables, if not already set for this shell
     PGPASSWORD=secret1234 psql -h localhost -p 6000 -d $db_database_name -U $db_database_app_username -f database/data/local.sql
 
-Open the application on browser:
+Open Jupyter Lab in browser:
 
-    http://localhost:9999
+    http://localhost:9999/lab
 
-Open admin GUI in browser:
+Open Apache Superset in browser:
 
-    http://localhost:9999/admin
-
-Open server API in browser:
-
-    http://localhost:9999/api/healthz
-
-Open www site in browser:
-
-    http://localhost:7463/docs
+    http://localhost:9999/bi
 
 Connect to database using password `secret1234`:
 
@@ -77,10 +69,6 @@ Connect to database using password `secret1234`:
 Use `npm`, `docker-compose` and `docker` normally to run commands and operate containers.
 
 If you would like to use some of the additional commands provided by Taito CLI also without using Taito CLI, first run the command with verbose option (`taito -v`) to see which commands Taito CLI executes under the hood, and then implement them in your `package.json` or `Makefile`.
-
-## Testing
-
-You may run Cypress against any remote environment without Taito CLI or docker. See `client/test/README.md` for more instructions.
 
 ## Configuration
 
