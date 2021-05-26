@@ -37,21 +37,17 @@ Make sure that everything has been initialized (e.g database) (add `--clean` to 
 
     taito init
 
-Open client GUI in browser:
+Open Jupyter Lab in browser:
 
-    taito open client
+    taito open lab
 
-Open admin GUI in browser:
+Open Jupyter Lab lessons in browser:
 
-    taito open admin
+    taito open lessons
 
-Open server API in browser:
+Open Apache Superset in browser:
 
-    taito open server
-
-Open www site in browser:
-
-    taito open www
+    taito open bi
 
 Show user accounts and other information that you can use to log in:
 
@@ -67,33 +63,24 @@ Access database:
 Run tests:
 
     taito unit                              # run all unit tests
-    taito unit:server                       # run unit tests of server
-    taito unit:server formatters            # run the 'formatters' unit test of server
+    taito unit:worker                       # run unit tests of worker
+    taito unit:worker formatters            # run the 'formatters' unit test of worker
 
     taito test                              # run all integration and end-to-end tests
-    taito test:server - posts               # run the 'posts' test of server default test suite
-    taito test:server jest cars             # run the 'cars' test of server jest test suite
-    taito test:client                       # run all integration and end-to-end tests of client
-    taito test:client - posts               # run the 'posts' test of client default test suite
-    taito test:client cypress 'car*'        # run all 'car*' tests of client cypress test suite
-
-Open Cypress user interface:
-
-    taito cypress                           # open cypress for default target (client)
-    taito cypress:client                    # open cypress for client
-    taito cypress:admin                     # open cypress for admin
+    taito test:worker - sync                # run the 'sync' test of worker default test suite
+    taito test:worker etl observations      # run the 'observations' test of worker etl test suite
 
 > TIP: Testing personnel may run Cypress against any remote environment without Taito CLI or docker. See `client/test/README.md` for more instructions.
 
 Start shell on a container:
 
-    taito shell:admin
-    taito shell:client
-    taito shell:server
+    taito shell:worker
+    taito shell:lab
+    taito shell:bi
 
 Restart and stop:
 
-    taito restart:server                    # restart the server container
+    taito restart:worker                    # restart the worker container
     taito restart                           # restart all containers
     taito stop                              # stop all containers
 
@@ -104,34 +91,15 @@ List all project related links and open one of them in browser:
 
 Check code quality:
 
-    taito code check
     <!-- TODO
-    taito code check:admin
-    taito code check:client
-    taito code check:server
+    taito code check
+    taito code check:worker
     -->
-
-Check build size:
-
-    taito size check
-    taito size check:client
-
-Check dependencies (available updates, vulnerabilities):
-
-    taito dep check
-    taito dep check:server
-    taito dep check:server -u               # update packages interactively
-    taito dep check:server -y               # update all packages (non-iteractive)
-
-> NOTE: Many of the `devDependencies` and `~` references are actually in use even if reported unused. But all unused `dependencies` can usually be removed from package.json.
 
 Cleaning:
 
-    taito clean:admin                       # Remove admin container image
-    taito clean:client                      # Remove client container image
-    taito clean:server                      # Remove server container image
+    taito clean:worker                      # Remove server container image
     taito clean:database                    # TODO: does not work
-    taito clean:npm                         # Delete node_modules directories
     taito clean                             # Clean everything
 
 The commands mentioned above work also for server environments (`f-NAME`, `dev`, `test`, `uat`, `stag`, `canary`, `prod`). Some examples for dev environment:
@@ -140,16 +108,13 @@ The commands mentioned above work also for server environments (`f-NAME`, `dev`,
     taito env apply:dev                     # Create the dev environment
     taito push                              # Push changes to current branch (dev)
     taito open builds:dev                   # Show build status and build logs
-    taito open client:dev                   # Open client GUI in browser
-    taito open admin:dev                    # Open admin GUI in browser
     taito info:dev                          # Show info
     taito status:dev                        # Show status of dev environment
-    taito logs:server:dev                   # Tail logs of server container
+    taito logs:worker:dev                   # Tail logs of worker container
     taito open logs:dev                     # Open logs on browser
     taito open storage:dev                  # Open storage bucket on browser
-    taito shell:server:dev                  # Start a shell on server container
+    taito shell:worker:dev                  # Start a shell on worker container
     taito test:dev                          # Run integration and e2e tests
-    taito cypress:client:dev                # Open cypress for client
     taito init:dev --clean                  # Clean reinit for dev environment
     taito db connect:dev                    # Access database on command line
     taito db proxy:dev                      # Start a proxy for database access

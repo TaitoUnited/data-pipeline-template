@@ -79,36 +79,7 @@ Project specific conventions.
 
 DIAGRAM: You can use [Gravizo](https://www.gravizo.com) for making a architecture diagram if the diagram does not contain any confidential information. Note that architecture diagram is not mandatory if the architecture is very simple.
 
-### Integrations
-
-* Client uses Google Maps
-* Server uses system X for authorization (OAUTH)
-* Server fetches products from system Y (REST/json)
-* Server sends email using Sendgrid (REST/json)
-
-### Processes
-
-Only non-trivial processes need to be described here (e.g. scheduled batch processing), though it might be a good idea to describe one or two basic scenarios also. Architecture is the main focus here. User stories should be documented elsewhere (e.g. wiki).
-
-#### Basic Scenario
-
-1. User performs action on UI
-2. Server authorizes action by system X
-3. Server reads/updates database
-4. Server returns value
-
-#### Product Snapshots
-
-1. User performs action on UI
-2. Server adds message to queue
-5. ...
-6. ...
-7. Server sends email
-
-#### Scheduled Jobs
-
-* ...
-* ...
+Add short description on integrations and processes, for example as a bullet list.
 
 ## Security
 

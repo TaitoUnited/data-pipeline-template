@@ -7,11 +7,11 @@ This file has been copied from [DATA-PIPELINE-TEMPLATE](https://github.com/Taito
 * [npm](https://github.com/npm/cli) that usually ships with [Node.js](https://nodejs.org/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 * [Taito CLI](https://taitounited.github.io/taito-cli/) (or see [TAITOLESS.md](TAITOLESS.md))
-* Optional: Some editor plugins depending on technology (e.g. [ESLint](https://eslint.org/docs/user-guide/integrations#editors) and [Prettier](https://prettier.io/docs/en/editors.html) for JavaScript/TypeScript)
+* Optional: Some editor plugins depending on technology (e.g. Flake8 plugin for linting Python code)
 
 ## Local development environment
 
-Start your local development environment by running `taito develop`. Once the command starts to install libraries, you can leave it on the background while you continue with configuration. Once the application has started, open the web application GUI with `taito open client`. NOTE: If your project includes a static website instead of web application GUI, you need to configure it first (see [/www/README.md](/www/README.md)), and then you can open it with `taito open www`.
+Start your local development environment by running `taito develop`. Once the command starts to install libraries, you can leave it on the background while you continue with configuration. Once the application has started, open lessons with `taito open lessons`.
 
 > If the application fails to start, run `taito trouble` to see troubleshooting. More information on local development you can find from [DEVELOPMENT.md](DEVELOPMENT.md).
 
@@ -48,8 +48,7 @@ See it build and deploy:
 
     taito open builds:dev
     taito status:dev
-    taito open client:dev
-    taito open server:dev
+    taito logs:worker:dev
 
 > The first CI/CD run takes some time as build cache is empty. Subsequent runs should be faster.
 
@@ -58,14 +57,6 @@ See it build and deploy:
 > If CI/CD tests fail on certificate error during the first CI/CD run, just retry the CI/CD run. Certificate manager probably had not retrieved the certificate yet.
 
 > If you have some trouble creating an environment, you can destroy it by running `taito env destroy:dev` and then try again with `taito env apply:dev`.
-
-* [ ] All done
-
-## Blog example
-
-The project template comes with a blog implementation that includes examples for web user interface, REST, GraphQL, database, files, background jobs, real-time notifications, pdf printing, etc. Once you don't need the examples anymore, just remove everything related to `blog` and use the `taito dep check` command to prune unused dependencies from `package.json` files. NOTE: Many of the `devDependencies` and `~` references are actually in use even if reported unused by the tool. But all unused `dependencies` may usually be removed from package.json.
-
-The client GUI uses [Material-UI](https://material-ui-next.com/) component library by default. It's a good match with the [react-admin](https://github.com/marmelab/react-admin) GUI, but please consider also other alternatives based on customer requirements. For example [Semantic UI React](https://react.semantic-ui.com/), [React Bootstrap](https://react-bootstrap.github.io/) and [Elemental](http://elemental-ui.com/) are also good alternatives.
 
 * [ ] All done
 
@@ -82,6 +73,16 @@ See [remote environments](https://taitounited.github.io/taito-cli/tutorial/05-re
 Operations on production and staging environments usually require admin rights. Please contact DevOps personnel if necessary.
 
 ## Stack
+
+**Jupyter Lab:** The project comes with Jupyter Lab, but it is enabled only in local development environment by default. If you want to enable it on Kubernetes, you need to add the `-lab` container defined in docker-compose.yaml also to `scripts/helm.yaml`. See `scripts/helm/examples.yaml` for examples.
+
+**Apache Superset:** The project comes with Apache Superset, but it is enabled only in local development environment by default. If you want to enable it on Kubernetes, you need to add all the `*-bi` containers defined in docker-compose.yaml also to `scripts/helm.yaml`. See `scripts/helm/examples.yaml` for examples.
+
+**Spark:** TODO
+
+**Kafka:** TODO
+
+**Argo:** TODO
 
 **Additional microservices:** Add a new microservice with the following steps. You can skip the IMPLEMENTATION steps if you are using a prebuilt Docker image (e.g. Redis).
 
@@ -121,14 +122,6 @@ Operations on production and staging environments usually require admin rights. 
         # Object lifecycle
         versioning: true
         versioningRetainDays: ${taito_default_storage_days}
-        # Backup (TODO: implement)
-        backupRetainDays: ${taito_default_storage_backup_days}
-        backupLocation: ${taito_default_storage_backup_location}
-        # User rights
-        admins:
-          - id: serviceAccount:${taito_project}-${taito_env}-server@${taito_resource_namespace_id}.iam.gserviceaccount.com
-        objectAdmins:
-        objectViewers:
       ```
   3. Add the storage bucket to `storage/` and `storage/.minio.sys/buckets/`.
   4. Add the storage bucket environment variables in `docker-compose.yaml` and `helm.yaml`.
@@ -136,22 +129,6 @@ Operations on production and staging environments usually require admin rights. 
   6. Start you local development environment with `taito start`.
   7. Check that the bucket works ok by running the uptime check with `taito open server`.
   8. Create the storage bucket for remote environments with `taito env apply:ENV`. You most likely need to run only the terraform step.
-
-**Minikube:** TODO: Using Minikube locally instead of Docker Compose.
-
-**Kafka:** TODO: Kafka for event-driven microservices.
-
-**API gateway:** TODO: Ambassador etc. as alternatives to nginx-ingress.
-
-**Istio:** TODO: Istio service mesh.
-
-**Knative:** TODO: Knative.
-
-**Authentication:** Ingress provides basic authentication, but it is only meant for hiding non-production environments. Here are some good technologies for implementing authentication: [Auth0](https://auth0.com), [Passport](http://www.passportjs.org/), [ORY Oathkeeper](https://www.ory.sh/api-access-control-kubernetes-cloud-native).
-
-**Static site generator (www):** See [/www/README.md](/www/README.md) for configuration instructions. You can use static site generator e.g. for user guides, API documentation, or application website.
-
-**Custom deployment:** If you cannot use Docker containers on your remote environments, you can customize the deployment. Instead of deploying the application as docker container images, you can, for example, deploy the application as WAR or EAR packages on a Java application server, or install everything directly on the remote host. You can enable the custom provider by setting `taito_provider=custom` (TODO: use taito_deployment_platforms instead) in `scripts/taito/config/main.sh` and by implementing [custom deployment scripts](https://github.com/TaitoUnited/DATA-PIPELINE-TEMPLATE/blob/master/scripts/taito/deploy-custom) yourself.
 
 **Environment descriptions in a separate repository**: Execute the following steps, if you want to keep your environment descriptions (`scripts/` and `database/`) in an another git repository:
 
@@ -192,11 +169,17 @@ You can add a new secret like this:
 2. Map the secret definition to a secret in `docker-compose.yaml` for Docker Compose and in `scripts/helm.yaml` for Kubernetes.
 3. Run `taito secret rotate:ENV SECRET` to generate a secret value for an environment. Run the command for each environment separately. Note that the rotate command restarts all pods in the same namespace.
 
-You can use the following types in your secret definition:
+You can use the following methods in your secret definition:
 
-- `random`: Randomly generated string.
-- `manual`: Manually entered string.
+- `random`: Randomly generated string (30 characters).
+- `random-N`: Randomly generated string (N characters).
+- `random-words`: Randomly generated words (6 words).
+- `random-words-N`: Randomly generated words (N words).
+- `random-uuid`: Randomly generated UUID.
+- `manual`: Manually entered string (min 8 characters).
+- `manual-N`: Manually entered string (min N characters).
 - `file`: File. The file path is entered manually.
+- `template-NAME`: File generated from a template by substituting environment variables and secrets values.
 - `htpasswd`: htpasswd file that contains 1-N user credentials. User credentials are entered manually.
 - `htpasswd-plain`: htpasswd file that contains 1-N user credentials. Passwords are stored in plain text. User credentials are entered manually.
 - `csrkey`: Secret key generated for certificate signing request (CSR).
