@@ -185,7 +185,7 @@ if [[ $template_default_zone == "gcloud-temp1" ]]; then
   sed -i 's/taito_ci_namespace_id=$taito_resource_namespace/taito_ci_namespace_id=$taito_zone/' ./scripts/taito/config/main.sh
   sed -i 's/copy\/common/copy\/devops/' ./scripts/taito/config/provider.sh
   sed -i "/^    namespace: ingress-nginx/a\    oldRewritePolicy: true" scripts/helm.yaml
-else
+elif [[ -f ./scripts/helm.yaml ]]; then
   sed -i "/# For old gcp environments/d" ./scripts/helm.yaml
 fi
 
@@ -288,6 +288,7 @@ fi
 
 # Remove extra template stuff from CI/CD scripts
 rm -rf cloudbuild-template.yaml
+sed -i "s|\${_TEMPLATE_DEFAULT_TAITO_IMAGE}|${template_default_taito_image:-}|g" .github/workflows/pipeline.yaml
 sed -i "s|\${_TEMPLATE_DEFAULT_TAITO_IMAGE}|${template_default_taito_image:-}|g" cloudbuild.yaml
 sed -i "s|_IMAGE_REGISTRY: eu.gcr.io/\$PROJECT_ID|_IMAGE_REGISTRY: ${template_default_container_registry}|" cloudbuild.yaml
 sed -i "s|\${_TEMPLATE_DEFAULT_TAITO_IMAGE}|${template_default_taito_image}|g" azure-pipelines.yml
