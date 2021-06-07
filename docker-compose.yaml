@@ -183,7 +183,7 @@ services:
     networks:
       - default
     ports:
-      - "192.168.0.17:5432:5432"
+      - "127.0.0.1:5432:5432"
     secrets:
       - DATABASE_PASSWORD
       - BIDB_DATABASE_PASSWORD
