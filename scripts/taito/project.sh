@@ -39,7 +39,7 @@ st_bucket_name="$taito_random_name-$taito_env"
 # Additional databases
 db_bidb_name=${taito_project//-/_}_bidb_${taito_env}
 db_bidb_port=5001
-if [[ ${taito_env} == "local" ]]; then
+if [[ ${taito_env} == "local" ]] || [[ ${taito_vpn_enabled} == "true" ]]; then
   db_bidb_port=5432
 fi
 db_bidb_mgr_username="${db_bidb_name}${db_database_username_suffix}"
