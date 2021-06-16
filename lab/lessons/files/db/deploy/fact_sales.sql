@@ -5,7 +5,6 @@ BEGIN;
 CREATE TABLE fact_sales (
   key text PRIMARY KEY,
   date_key text NOT NULL REFERENCES dim_dates (key),
-  store_key text NOT NULL REFERENCES dim_stores (key),
   product_key text NOT NULL REFERENCES dim_products (key),
   order_number text NOT NULL,
   quantity integer NOT NULL,
