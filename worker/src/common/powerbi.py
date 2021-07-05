@@ -141,7 +141,7 @@ class PowerBIDataset():
     def update_table_schema(self, table_name, table_schema):
         validate_is_one_word(table_name)
         response = requests.post(
-            url=f'https://api.powerbi.com/v1.0/myorg/groups/{self.group_id}/datasets/{self.datasetId}/tables/{self.table_name_prefix + table_name}',  # noqa: E501
+            url=f'https://api.powerbi.com/v1.0/myorg/groups/{self.group_id}/datasets/{self.dataset_id}/tables/{self.table_name_prefix + table_name}',  # noqa: E501
             headers=self.api_headers,
             json=table_schema
         )
