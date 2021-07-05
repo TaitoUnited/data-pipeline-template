@@ -146,7 +146,7 @@ class PowerBIDataset():
             json=table_schema
         )
         check_response(response)
-        return response.json()['id']
+        return response
 
     def insert_table_data(self, table_name, data):
         validate_is_one_word(table_name)
