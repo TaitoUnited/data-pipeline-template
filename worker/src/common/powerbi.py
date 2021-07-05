@@ -89,11 +89,9 @@ def as_powerbi_table_data(
     query = f'select * from {table_name}'
     params = {}
     if limit:
-        query = (
-            query + ' order by %(order_by)s offset %(offset)s limit %(limit)s'
-        )
+        query = query + ' order by ' + order_by
+        query = query + ' offset %(offset)s limit %(limit)s'
         params = {
-            "order_by": order_by,
             "offset": offset,
             "limit": limit
         }
