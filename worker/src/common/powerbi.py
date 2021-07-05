@@ -111,7 +111,7 @@ def as_powerbi_table_data(
 # -------------------------------------------------------
 
 
-def __check_response(response):
+def check_response(response):
     if not response.ok:
         print(response, file=sys.stderr)
         raise Exception("Response not ok")
@@ -124,7 +124,7 @@ def create_dataset(api_headers, group_id, dataset_schema):
         headers=api_headers,
         json=dataset_schema
     )
-    __check_response(response)
+    check_response(response)
     return response.json()['id']
 
 
@@ -145,7 +145,7 @@ class PowerBIDataset():
             headers=self.api_headers,
             json=table_schema
         )
-        __check_response(response)
+        check_response(response)
         return response.json()['id']
 
     def insert_table_data(self, table_name, data):
@@ -155,7 +155,7 @@ class PowerBIDataset():
             headers=self.api_headers,
             json=data
         )
-        __check_response(response)
+        check_response(response)
         return response
 
     def delete_table_data(self, table_name):
@@ -164,7 +164,7 @@ class PowerBIDataset():
             url=f'https://api.powerbi.com/v1.0/myorg/groups/{self.group_id}/datasets/{self.dataset_id}/tables/{self.table_name_prefix + table_name}/rows',  # noqa: E501
             headers=self.api_headers
         )
-        __check_response(response)
+        check_response(response)
         return response
 
     def copy_table_data(
