@@ -32,6 +32,7 @@ services:
       DATABASE_PORT: ${db_database_port}
       DATABASE_NAME: ${db_database_name}
       DATABASE_USER: ${db_database_app_username}
+      DATABASE_PASSWORD: ${taito_default_password}
       DATABASE_POOL_MIN: '1'
       DATABASE_POOL_MAX: '10'
       DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
