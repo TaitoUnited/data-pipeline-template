@@ -35,6 +35,7 @@ services:
       - DATABASE_SSL_CA
       - DATABASE_SSL_CERT
       - DATABASE_SSL_KEY
+    tty: true
     environment:
       taito_running_tests: "true"
 

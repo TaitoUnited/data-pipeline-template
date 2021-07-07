@@ -27,6 +27,7 @@ services:
       - '8080'
     volumes:
       - "./worker:/develop:delegated"
+    tty: true
     environment:
       DATABASE_HOST: data-pipeline-template-database
       DATABASE_PORT: ${db_database_port}

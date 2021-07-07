@@ -42,6 +42,7 @@ services:
       - default
     ports:
       - '8080'
+    tty: true
     environment:
       DATABASE_HOST: 172.17.0.1  # For docker db: data-pipeline-template-${taito_env}-database
       DATABASE_PORT: ${db_database_port}
