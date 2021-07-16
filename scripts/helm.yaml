@@ -59,7 +59,7 @@ full-stack:
          useProxy: ${gcp_db_proxy_enabled} # For old gcp environments
          instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
          port: ${db_database_real_port} # For old gcp environments
-         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments      
+         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
       secretEnv:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
@@ -71,9 +71,9 @@ full-stack:
         DATABASE_USER: ${db_database_app_username}
         DATABASE_POOL_MIN: '0'
         DATABASE_POOL_MAX: '5'
-        DATABASE_SSL_ENABLED: ${db_database_ssl_enabled}
-        DATABASE_SSL_CLIENT_CERT_ENABLED: ${db_database_ssl_client_cert_enabled}
-        DATABASE_SSL_SERVER_CERT_ENABLED: ${db_database_ssl_server_cert_enabled}
+        DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
+        DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
+        DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
         STORAGE_TYPE: azure
         STORAGE_ENDPOINT:
         STORAGE_BUCKET: ${st_bucket_name}
