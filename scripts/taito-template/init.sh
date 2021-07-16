@@ -28,6 +28,10 @@ find . -type f -exec sed -i \
 # Generate ports
 echo "Generating unique random ports (avoid conflicts with other projects)..."
 if [[ ! $ingress_port ]]; then ingress_port=$(shuf -i 8000-9999 -n 1); fi
+if [[ ! $server_debug_port ]]; then server_debug_port=$(shuf -i 4000-4999 -n 1); fi
+sed -i "s/4229/${server_debug_port}/g" \
+  docker-compose.yaml \
+  .vscode/launch.json &> /dev/null || :
 sed -i "s/9999/${ingress_port}/g" \
   scripts/taito/DEVELOPMENT.md \
   scripts/taito/TAITOLESS.md \

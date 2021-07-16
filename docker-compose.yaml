@@ -25,6 +25,7 @@ services:
       - default
     ports:
       - '8080'
+      - "127.0.0.1:4229:9229"
     volumes:
       - "./worker:/develop:delegated"
     tty: true
