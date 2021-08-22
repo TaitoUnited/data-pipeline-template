@@ -1,17 +1,16 @@
-#!/usr/local/bin/python3
+#!/usr/local/bin/python3 -u
 import sys
-from src.worker import start_worker
+from src import create_app
 from src.example.etl import sale_etl
 
-
 command = sys.argv[-1]
+app = create_app(single_command=True, connect_storage=False, init_routes=False)
 
-if command == 'start_worker':
-    start_worker(True)
-if command == 'sales_listen':
-    sale_etl.listen()
-elif command == 'sales_extract':
-    sale_etl.extract()
-else:
-    print("Unknown command: " + command, file=sys.stderr)
-    exit(1)
+with app.app_context():
+    if command == 'sales_extract':
+        sale_etl.extract()
+    elif command == 'sales_listen':
+        sale_etl.listen()
+    else:
+        print("Unknown command: " + command, file=sys.stderr)
+        exit(1)

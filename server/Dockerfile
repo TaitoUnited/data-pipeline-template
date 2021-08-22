@@ -7,12 +7,15 @@ ENV PYTHON_ENV development
 ENV FLASK_ENV development
 ENV FLASK_APP src
 
+RUN useradd supervisor && useradd python
+
 RUN apt-get -y update && apt-get -y install \
   build-essential \
   libffi-dev \
   python3-dev \
   libssl-dev \
-  cargo
+  cargo \
+  supervisor
 
 RUN mkdir -p /develop
 WORKDIR /develop

@@ -4,9 +4,9 @@ from .infra import infra_router
 
 
 def register_rest_routes(app: Flask):
-    # -----------------------------------------------------------------------
-    # NOTE: Add your routers here. They implement the REST API endpoints.
-    # -----------------------------------------------------------------------
+    # -------------------------------------------
+    # NOTE: Add your REST API routers here
+    # -------------------------------------------
     app.register_blueprint(infra_router.bp)
 
     # Register example routes on development mode only
@@ -17,8 +17,8 @@ def register_rest_routes(app: Flask):
 
 
 def register_graphql_resolvers(app: Flask):
-    # -----------------------------------------------------------------------
-    # NOTE: Add your resolvers here. They implement the GraphQL endpoints.
-    # -----------------------------------------------------------------------
+    # -------------------------------------------
+    # NOTE: Add your GraphQL API resolvers here
+    # -------------------------------------------
     # TODO: Add GraphQL support
     return

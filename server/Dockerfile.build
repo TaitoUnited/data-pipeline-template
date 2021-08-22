@@ -31,10 +31,14 @@ LABEL version=${BUILD_VERSION} \
 
 ENV PYTHON_ENV production
 ENV FLASK_ENV production
+
+RUN useradd supervisor && useradd python && useradd nginx
+
 RUN apt-get -y update && apt-get -y install \
   nginx \
   build-essential \
-  libffi-dev
+  libffi-dev \
+  supervisor
 
 RUN mkdir -p /service
 WORKDIR /service
@@ -49,7 +53,7 @@ RUN pip3 install --upgrade pip && \
     pip3 install -r requirements-prod.txt
 RUN apk del build-essential libffi-dev
 
-COPY ${SERVICE_DIR}/uwsgi.ini ${SERVICE_DIR}/start.sh .
+COPY ${SERVICE_DIR}/start.sh ${SERVICE_DIR}/supervi* ${SERVICE_DIR}/uwsgi.ini .
 COPY ${SERVICE_DIR}/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Make due for the nginx pid file and unix socket
@@ -57,4 +61,4 @@ RUN mkdir -p /var/run/nginx
 RUN chown nginx:nginx /var/run/nginx
 
 EXPOSE 8080
-CMD nginx -s stop; nginx; nginx -s reload; ./start.sh
+CMD ./start.sh

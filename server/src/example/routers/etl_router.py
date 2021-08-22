@@ -5,6 +5,14 @@ from ..etl import sale_etl
 
 bp = Blueprint('etl', __name__, url_prefix='/example/etl')
 
+# ---------------------------------------------------------------
+# NOTE: If these ETLs are long running processes and triggered
+# quite often with webhooks, consider using Celery to execute
+# them in a separate worker process. Otherwise they might impair
+# API performance as API has a limited amount of processes
+# available.
+# ---------------------------------------------------------------
+
 
 @bp.route('/sales_extract', methods=('GET', 'POST'))
 def run():

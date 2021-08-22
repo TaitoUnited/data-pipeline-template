@@ -3,10 +3,13 @@ import typing
 from flask import Flask
 from flask_cors import CORS
 from . import api
-from . import worker
 
 
 def create_app(
+    single_command=False,
+    connect_database=True,
+    connect_storage=True,
+    init_routes=True,
     test_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
 ) -> Flask:
     """Flask app factory.
@@ -46,15 +49,17 @@ def create_app(
     def setup_flask_worker() -> None:
         # Connect infra
         from src.common.setup import db, storage
-        db.connect(app)
-        storage.connect(app)
-        api.register_rest_routes(app)
-        api.register_graphql_resolvers(app)
+        if connect_database:
+            db.connect(app)
+        if connect_storage:
+            storage.connect(app)
+        if init_routes:
+            api.register_rest_routes(app)
+            api.register_graphql_resolvers(app)
 
-    if os.environ.get('FLASK_ENV') == 'development':
+    if single_command or os.environ.get('FLASK_ENV') == 'development':
         setup_flask_worker()
-        if os.environ.get('MODE') != 'api':
-            worker.start_worker()
+
     else:
         import uwsgidecorators
         uwsgidecorators.postfork(setup_flask_worker)

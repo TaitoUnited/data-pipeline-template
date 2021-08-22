@@ -1,4 +1,5 @@
 import time
+from ..daos import sale_dao
 
 
 def listen():
