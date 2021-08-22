@@ -59,6 +59,8 @@ db_bidb_default_secret="${db_bidb_mgr_secret}"
 taito_secrets="
   $db_database_app_secret:random
   $db_bidb_app_secret:random
+  $taito_project-$taito_env-api.apiKey:random
+  $taito_project-$taito_env-api.apiKeyEtl:random
 "
 
 # Secrets for local environment only

@@ -20,28 +20,32 @@ _config = defaultdict(
 
 
 class Config:
-    # Environment
+    ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
+
+    # Labeling
     COMMON_PROJECT = _config['COMMON_PROJECT']
     COMMON_COMPANY = _config['COMMON_COMPANY']
     COMMON_FAMILY = _config['COMMON_FAMILY']
     COMMON_APPLICATION = _config['COMMON_APPLICATION']
     COMMON_SUFFIX = _config['COMMON_SUFFIX']
-    COMMON_DOMAIN = _config['COMMON_DOMAIN']
     COMMON_IMAGE_TAG = _config['COMMON_IMAGE_TAG']
-    COMMON_ENV = _config['COMMON_ENV']  # dev / test / stag / prod
-    PYTHON_ENV = _config['PYTHON_ENV']  # development / production
-
-    # Basic
-    ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
     APP_NAME = 'data-pipeline-template-server'
-    DEBUG = bool(_config['COMMON_DEBUG'])
     APP_VERSION = (
       f"{_config['BUILD_VERSION']}+local"
       if not _config['BUILD_IMAGE_TAG']
       else f"{_config['BUILD_VERSION']}+{_config['BUILD_IMAGE_TAG']}"
       )
+
+    # Environment
+    COMMON_ENV = _config['COMMON_ENV']        # dev / test / stag / prod
+    PYTHON_ENV = _config['PYTHON_ENV']        # development / production
+    COMMON_DOMAIN = _config['COMMON_DOMAIN']  # myapp.mydomain.com
+
+    # API
     API_PORT = int(_config.get('API_PORT', -1))
     API_BINDADDR = _config['API_BINDADDR']
+    API_KEY = read_secret('API_KEY')
+    API_KEY_ETL = read_secret('API_KEY_ETL')
     CORS_ORIGINS = [x.strip() for x in _config['CORS_ORIGINS'].split(',')]
 
     # Sentry
@@ -67,6 +71,7 @@ class Config:
     # Logging
     COMMON_LOG_LEVEL = _config['COMMON_LOG_LEVEL']
     COMMON_LOG_FORMAT = _config['COMMON_LOG_FORMAT']
+    DEBUG = bool(_config['COMMON_DEBUG'])
 
     # Testing
     TESTING = False

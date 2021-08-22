@@ -3,6 +3,7 @@ FROM python:3.9
 # FOR SPARK: FROM bitnami/spark:3 as builder
 
 ENV NODE_ENV development
+ENV PYTHON_ENV development
 ENV FLASK_ENV development
 ENV FLASK_APP src
 
@@ -30,5 +31,4 @@ EXPOSE 8080
 CMD pip-compile requirements-dev.in; \
     pip-compile requirements-prod.in; \
     pip3 install -r requirements-dev.txt; \
-    python -m debugpy --listen 0.0.0.0:9229 -m \
-      flask run --host $API_BINDADDR --port $API_PORT --no-debugger
+    ./start.sh

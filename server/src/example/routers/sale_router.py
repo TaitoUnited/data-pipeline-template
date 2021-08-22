@@ -1,25 +1,23 @@
-import typing
-from flask import Blueprint, request
+from flask import Blueprint, request, current_app
+from src.common.utils.format import filter_item_properties
+from src.common.utils.flask import validate_api_key
 from ..services import sale_service
-from ..types.sale import sale_server_to_client, sale_client_to_server
 
 
-bp = Blueprint('sales', __name__, url_prefix='/sales')
+bp = Blueprint('sales', __name__, url_prefix='/example/sales')
 
 
 @bp.route('')
-def get_all_sales() -> typing.Any:
-    """Get all sales.
+def get_all():
+    """Get all sales. API KEY can be given as X-API-KEY request header
+       (recommended) or as api_key query parameter (for development).
     """
-    sales = sale_service.get_all_sales()
-    return {'data': sale_server_to_client(sales)}
+    validate_api_key(request, current_app.config['API_KEY'])
+    sales = sale_service.get_all()
 
+    # Filter unwanted properties from response
+    properties = request.args.get('properties')
+    if properties:
+        sales = filter_item_properties(sales, properties.split(','))
 
-@bp.route('', methods=('POST',))
-def create_sale() -> typing.Any:
-    """Save new sale to database.
-    """
-    request_data = request.get_json()
-    sale_data = sale_client_to_server(request_data['data'])
-    sale = sale_service.create_sale(sale_data)
-    return {'data': sale_server_to_client(sale)}, 201
+    return {'data': sales}

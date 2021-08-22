@@ -1,12 +1,17 @@
 #!/usr/local/bin/python3
 import sys
-from src.example.services.job import main as job
+from src.worker import start_worker
+from src.example.services import sale_etl_service
 
 
 command = sys.argv[-1]
 
-if command == 'job':
-    job()
+if command == 'start_worker':
+    start_worker(True)
+if command == 'sales_listen':
+    sale_etl_service.listen()
+elif command == 'sales_extract':
+    sale_etl_service.extract()
 else:
     print("Unknown command: " + command, file=sys.stderr)
     exit(1)

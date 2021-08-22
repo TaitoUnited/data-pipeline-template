@@ -1,11 +1,11 @@
 import time
 
 
-def main():
+def listen():
     while True:
         print("Example implementation that just keeps on running.")
         time.sleep(10)
 
 
-if __name__ == "__main__":
-    main()
+def extract():
+    print("Example implementation that runs once.")

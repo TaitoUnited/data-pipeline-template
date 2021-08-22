@@ -18,3 +18,12 @@ def to_snake(d: typing.Dict[str, typing.Any]) -> typing.Dict[str, typing.Any]:
         camel = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', key)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', camel).lower()
     return {convert(k): v for k, v in d.items()}
+
+
+def filter_item_properties(items, propertyNames):
+    filtered = []
+    for item in items:
+        filtered.append({
+            propertyName: item[propertyName] for propertyName in propertyNames
+        })
+    return filtered

@@ -2,6 +2,8 @@ import os
 import typing
 from flask import Flask
 from flask_cors import CORS
+from . import api
+from . import worker
 
 
 def create_app(
@@ -41,22 +43,20 @@ def create_app(
         code = getattr(e, 'code', 500)
         return {'error': {'message': str(e), 'id': e_id}}, code
 
-    def setup_worker() -> None:
+    def setup_flask_worker() -> None:
         # Connect infra
         from src.common.setup import db, storage
         db.connect(app)
         storage.connect(app)
-
-        # Register routes
-        from .infra import infra_router
-        from .example.routers import sale_router
-        app.register_blueprint(infra_router.bp)
-        app.register_blueprint(sale_router.bp)
+        api.register_rest_routes(app)
+        api.register_graphql_resolvers(app)
 
     if os.environ.get('FLASK_ENV') == 'development':
-        setup_worker()
+        setup_flask_worker()
+        if os.environ.get('MODE') != 'api':
+            worker.start_worker()
     else:
         import uwsgidecorators
-        uwsgidecorators.postfork(setup_worker)
+        uwsgidecorators.postfork(setup_flask_worker)
 
     return app

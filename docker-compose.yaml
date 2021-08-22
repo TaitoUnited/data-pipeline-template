@@ -30,7 +30,11 @@ services:
       - "./server:/develop:delegated"
       - "./shared:/develop/shared:delegated"
     tty: true
+    secrets:
+      - API_KEY
+      - API_KEY_ETL
     environment:
+      MODE: any  # api, worker, any
       # Paths and bind
       BASE_PATH: /api
       API_PORT: 8080
@@ -241,6 +245,10 @@ secrets:
     file: ./secrets/${taito_env}/${db_database_app_secret}
   BIDB_DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_bidb_app_secret}
+  API_KEY:
+    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKey
+  API_KEY_ETL:
+    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKeyEtl
 
 networks:
   default:
