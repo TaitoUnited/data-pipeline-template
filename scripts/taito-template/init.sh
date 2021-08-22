@@ -29,6 +29,11 @@ find . -type f -exec sed -i \
 echo "Generating unique random ports (avoid conflicts with other projects)..."
 if [[ ! $ingress_port ]]; then ingress_port=$(shuf -i 8000-9999 -n 1); fi
 if [[ ! $server_debug_port ]]; then server_debug_port=$(shuf -i 4000-4999 -n 1); fi
+if [[ ! $storage_port ]]; then storage_port=$(shuf -i 2000-2999 -n 1); fi
+sed -i "s/8888/${storage_port}/g" \
+  docker-compose.yaml \
+  scripts/taito/env-local.sh \
+  scripts/taito/TAITOLESS.md &> /dev/null || :
 sed -i "s/4229/${server_debug_port}/g" \
   docker-compose.yaml \
   .vscode/launch.json &> /dev/null || :
