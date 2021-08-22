@@ -24,7 +24,7 @@ taito_environments="${template_default_environments}"
 # Configuration instructions:
 # TODO
 
-taito_containers="bi lab storage worker"
+taito_containers="bi lab server storage"
 if [[ ${taito_env} == "local" ]]; then
   taito_containers="${taito_containers} database "
 fi

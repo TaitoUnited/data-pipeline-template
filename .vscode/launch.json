@@ -7,7 +7,7 @@
       "request": "attach",
       "pathMappings": [
         {
-          "localRoot": "${workspaceFolder}/worker",
+          "localRoot": "${workspaceFolder}/server",
           "remoteRoot": "/develop"
         }
       ],

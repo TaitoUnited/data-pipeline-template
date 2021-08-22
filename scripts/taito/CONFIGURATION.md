@@ -48,7 +48,7 @@ See it build and deploy:
 
     taito open builds:dev
     taito status:dev
-    taito logs:worker:dev
+    taito logs:server:dev
 
 > The first CI/CD run takes some time as build cache is empty. Subsequent runs should be faster.
 

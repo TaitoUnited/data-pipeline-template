@@ -47,8 +47,47 @@ full-stack:
 
   services:
 
-    worker:
+    server:
       egress:
+        # Allow outbound connections to database and to any public ip address
+        - ip: '${db_database_real_host}/32'
+        - ip: public
+      livenessInitialDelay: 120
+      tty: true
+      db: # For old gcp environments
+        useProxy: ${gcp_db_proxy_enabled} # For old gcp environments
+        instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
+        port: ${db_database_real_port} # For old gcp environments
+        proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
+      secret:
+        DATABASE_PASSWORD: ${db_database_app_secret}
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+      env:
+        MODE: api
+        BASE_PATH: /api
+        API_PORT: '8080'
+        API_BINDADDR: '0.0.0.0'
+        CORS_ORIGINS: # Comma separated list of allowed origins
+        SENTRY_DSN: #sentryDSN
+        DATABASE_HOST: '${db_database_real_host}'
+        DATABASE_PORT: '${db_database_real_port}'
+        DATABASE_NAME: ${db_database_name}
+        DATABASE_USER: ${db_database_app_username}
+        DATABASE_POOL_MIN: '0'
+        DATABASE_POOL_MAX: '5'
+        DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
+        DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
+        DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
+        STORAGE_TYPE: azure
+        STORAGE_ENDPOINT:
+        STORAGE_BUCKET: ${st_bucket_name}
+
+    worker:
+      replicas: 1
+      image: ${taito_container_registry}/server:${taito_build_image_tag}
+      egress:
+        # Allow outbound connections to database and to any public ip address
         - ip: '${db_database_real_host}/32'
         - ip: public
       livenessCommand:
@@ -56,15 +95,17 @@ full-stack:
         - --version
       tty: true
       db: # For old gcp environments
-         useProxy: ${gcp_db_proxy_enabled} # For old gcp environments
-         instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
-         port: ${db_database_real_port} # For old gcp environments
-         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
-      secretEnv:
+        useProxy: ${gcp_db_proxy_enabled} # For old gcp environments
+        instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
+        port: ${db_database_real_port} # For old gcp environments
+        proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
+      secret:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
       env:
+        MODE: worker
+        SENTRY_DSN: #sentryDSN
         DATABASE_HOST: '${db_database_real_host}'
         DATABASE_PORT: '${db_database_real_port}'
         DATABASE_NAME: ${db_database_name}

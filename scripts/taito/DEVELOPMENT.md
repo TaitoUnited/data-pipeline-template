@@ -63,24 +63,24 @@ Access database:
 Run tests:
 
     taito unit                              # run all unit tests
-    taito unit:worker                       # run unit tests of worker
-    taito unit:worker formatters            # run the 'formatters' unit test of worker
+    taito unit:server                       # run unit tests of server
+    taito unit:server formatters            # run the 'formatters' unit test of server
 
     taito test                              # run all integration and end-to-end tests
-    taito test:worker - sync                # run the 'sync' test of worker default test suite
-    taito test:worker etl observations      # run the 'observations' test of worker etl test suite
+    taito test:server - sync                # run the 'sync' test of server default test suite
+    taito test:server etl observations      # run the 'observations' test of server etl test suite
 
 > TIP: Testing personnel may run Cypress against any remote environment without Taito CLI or docker. See `client/test/README.md` for more instructions.
 
 Start shell on a container:
 
-    taito shell:worker
+    taito shell:server
     taito shell:lab
     taito shell:bi
 
 Restart and stop:
 
-    taito restart:worker                    # restart the worker container
+    taito restart:server                    # restart the server container
     taito restart                           # restart all containers
     taito stop                              # stop all containers
 
@@ -93,12 +93,12 @@ Check code quality:
 
     <!-- TODO
     taito code check
-    taito code check:worker
+    taito code check:server
     -->
 
 Cleaning:
 
-    taito clean:worker                      # Remove server container image
+    taito clean:server                      # Remove server container image
     taito clean:database                    # TODO: does not work
     taito clean                             # Clean everything
 
@@ -110,10 +110,10 @@ The commands mentioned above work also for server environments (`f-NAME`, `dev`,
     taito open builds:dev                   # Show build status and build logs
     taito info:dev                          # Show info
     taito status:dev                        # Show status of dev environment
-    taito logs:worker:dev                   # Tail logs of worker container
+    taito logs:server:dev                   # Tail logs of server container
     taito open logs:dev                     # Open logs on browser
     taito open storage:dev                  # Open storage bucket on browser
-    taito shell:worker:dev                  # Start a shell on worker container
+    taito shell:server:dev                  # Start a shell on server container
     taito test:dev                          # Run integration and e2e tests
     taito init:dev --clean                  # Clean reinit for dev environment
     taito db connect:dev                    # Access database on command line

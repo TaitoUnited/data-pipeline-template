@@ -15,11 +15,11 @@ services:
 
   # "IMPLEMENTATION"
 
-  data-pipeline-template-worker:
-    container_name: data-pipeline-template-worker
+  data-pipeline-template-server:
+    container_name: data-pipeline-template-server
     build:
-      context: ./worker
-      dockerfile: Dockerfile
+      context: ./server
+      dockerfile: ${dockerfile}
     restart: unless-stopped
     networks:
       - default
@@ -27,9 +27,25 @@ services:
       - '8080'
       - "127.0.0.1:4229:9229"
     volumes:
-      - "./worker:/develop:delegated"
+      - "./server:/develop:delegated"
+      - "./shared:/develop/shared:delegated"
     tty: true
     environment:
+      # Paths and bind
+      BASE_PATH: /api
+      API_PORT: 8080
+      API_BINDADDR: 0.0.0.0
+      COMMON_PUBLIC_PORT: 9999
+      CORS_ORIGINS: https://example1.com,https://example2.com
+      # Common variables
+      COMMON_COMPANY: companyname
+      COMMON_PROJECT: full-stack-template
+      COMMON_DEBUG: 'false'
+      COMMON_LOG_FORMAT: text
+      COMMON_LOG_LEVEL: info      # trace, debug, info, warn, error, fatal
+      COMMON_ENV: local
+      # Services
+      SENTRY_DSN: #sentryDSN
       DATABASE_HOST: data-pipeline-template-database
       DATABASE_PORT: ${db_database_port}
       DATABASE_NAME: ${db_database_name}
@@ -62,6 +78,7 @@ services:
       - "./lab/common:/home/jovyan/common:delegated"
       - "./lab/lessons:/home/jovyan/lessons:delegated"
       - "./lab/work:/home/jovyan/work:delegated"
+      - "./shared:/home/jovyan/shared:delegated"
     environment:
       JUPYTER_OPTIONS: --LabApp.token='' # Disables authentication
       COMMON_URL: http://localhost:8029

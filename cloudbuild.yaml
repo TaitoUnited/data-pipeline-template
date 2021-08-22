@@ -73,10 +73,10 @@ steps:
 #     - taito_mode=ci
 #     - taito_ci_phases=${_TAITO_CI_PHASES}
 
-- id: artifact-prepare-worker
+- id: artifact-prepare-server
   waitFor: ['build-prepare']
   name: '${_TEMPLATE_DEFAULT_TAITO_IMAGE}'
-  args: ['artifact-prepare:worker:$BRANCH_NAME', '$COMMIT_SHA']
+  args: ['artifact-prepare:server:$BRANCH_NAME', '$COMMIT_SHA']
   env:
     - taito_mode=ci
     - taito_ci_phases=${_TAITO_CI_PHASES}
@@ -140,10 +140,10 @@ steps:
 #     - taito_mode=ci
 #     - taito_ci_phases=${_TAITO_CI_PHASES}
 
-- id: artifact-release-worker
+- id: artifact-release-server
   waitFor: ['deployment-verify']
   name: '${_TEMPLATE_DEFAULT_TAITO_IMAGE}'
-  args: ['artifact-release:worker:$BRANCH_NAME', '$COMMIT_SHA']
+  args: ['artifact-release:server:$BRANCH_NAME', '$COMMIT_SHA']
   env:
     - taito_mode=ci
     - taito_ci_phases=${_TAITO_CI_PHASES}

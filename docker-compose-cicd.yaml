@@ -14,9 +14,9 @@
 
 version: '3.8'
 services:
-  data-pipeline-template-worker-cicd:
-    container_name: data-pipeline-template-worker-cicd
-    image: data-pipeline-template-worker-builder:latest
+  data-pipeline-template-server-cicd:
+    container_name: data-pipeline-template-server-cicd
+    image: data-pipeline-template-server-builder:latest
     restart: 'no'
     networks:
       - cicd
@@ -24,7 +24,7 @@ services:
       - data-pipeline-template-database-proxy
       # - data-pipeline-template-services-proxy
     volumes:
-      - "${DOCKER_HOST_PATH}/worker:/develop:delegated"
+      - "${DOCKER_HOST_PATH}/server:/develop:delegated"
       - "/develop/node_modules"
       - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_mgr_secret}:/run/secrets/DATABASE_PASSWORD" # For GitHub Actions
       - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_ca_secret}:/run/secrets/DATABASE_SSL_CA" # For GitHub Actions

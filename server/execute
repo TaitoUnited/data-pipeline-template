@@ -1,0 +1,12 @@
+#!/usr/local/bin/python3
+import sys
+from src.example.services.job import main as job
+
+
+command = sys.argv[-1]
+
+if command == 'job':
+    job()
+else:
+    print("Unknown command: " + command, file=sys.stderr)
+    exit(1)

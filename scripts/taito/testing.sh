@@ -28,6 +28,9 @@ else
   fi
 fi
 
+# URLs for tests
+test_server_TEST_API_URL=$ci_test_base_url/api
+
 # Database connection for tests
 if [[ $taito_mode == "ci" ]] && [[ ${ci_disable_db_proxy} == "true" ]]; then
   test_all_DATABASE_HOST=${database_real_host:-$database_host}

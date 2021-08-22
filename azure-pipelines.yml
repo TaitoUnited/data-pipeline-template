@@ -49,7 +49,7 @@ jobs:
   - bash: |
       # taito artifact prepare:bi:$(Build.SourceBranchName) $(Build.SourceVersion)
       # taito artifact prepare:lab:$(Build.SourceBranchName) $(Build.SourceVersion)
-      taito artifact prepare:worker:$(Build.SourceBranchName) $(Build.SourceVersion)
+      taito artifact prepare:server:$(Build.SourceBranchName) $(Build.SourceVersion)
     displayName: prepare artifacts
 
   # deploy
@@ -69,7 +69,7 @@ jobs:
   - bash: |
       # taito artifact release:bi:$(Build.SourceBranchName) $(Build.SourceVersion)
       # taito artifact release:lab:$(Build.SourceBranchName) $(Build.SourceVersion)
-      taito artifact release:worker:$(Build.SourceBranchName) $(Build.SourceVersion)
+      taito artifact release:server:$(Build.SourceBranchName) $(Build.SourceVersion)
     displayName: release artifacts
 
   # release

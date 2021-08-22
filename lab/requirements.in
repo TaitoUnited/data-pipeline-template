@@ -3,7 +3,6 @@ azure-storage-blob
 azure-storage-queue
 boto3
 google-cloud-storage
-jupyter-module-loader
 minio
 msal
 pandas
@@ -12,3 +11,6 @@ pydantic
 python-json-logger
 requests
 sqlalchemy
+
+# Jupyter
+jupyter-module-loader

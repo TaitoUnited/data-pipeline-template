@@ -20,7 +20,7 @@ taito build prepare:$BRANCH $IMAGE_TAG
 # NOTE: Can be executed in parallel if no user input is required
 # taito artifact prepare:bi:$BRANCH $IMAGE_TAG
 # taito artifact prepare:lab:$BRANCH $IMAGE_TAG
-taito artifact prepare:worker:$BRANCH $IMAGE_TAG
+taito artifact prepare:server:$BRANCH $IMAGE_TAG
 
 # Deploy changes to target environment
 taito db deploy:$BRANCH
@@ -36,7 +36,7 @@ taito deployment verify:$BRANCH
 # NOTE: Can be executed in parallel if no user input is required
 # taito artifact release:bi:$BRANCH $IMAGE_TAG
 # taito artifact release:lab:$BRANCH $IMAGE_TAG
-taito artifact release:worker:$BRANCH $IMAGE_TAG
+taito artifact release:server:$BRANCH $IMAGE_TAG
 
 # Release build
 taito build release:$BRANCH

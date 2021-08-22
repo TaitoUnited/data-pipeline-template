@@ -33,9 +33,9 @@ services:
 
   # "IMPLEMENTATION"
 
-  data-pipeline-template-worker:
-    container_name: data-pipeline-template-worker
-    image: local/data-pipeline-template/worker:_IMAGE_TAG_
+  data-pipeline-template-server:
+    container_name: data-pipeline-template-server
+    image: local/data-pipeline-template/server:_IMAGE_TAG_
     restart: unless-stopped
     logging: *default-logging
     networks:

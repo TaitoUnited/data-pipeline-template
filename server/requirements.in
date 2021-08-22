@@ -1,0 +1,18 @@
+azure-eventgrid
+azure-storage-blob
+azure-storage-queue
+boto3
+google-cloud-storage
+minio
+msal
+pandas
+psycopg2-binary
+pydantic
+python-json-logger
+requests
+sqlalchemy
+
+# Flask API
+flask
+flask-cors
+sentry-sdk[flask]

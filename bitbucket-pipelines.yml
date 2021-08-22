@@ -49,14 +49,14 @@ pipelines:
       #     artifacts:
       #       - lab.docker
       #       - lab-tester.docker
-      - step: # worker prepare
+      - step: # server prepare
           script:
             - export taito_mode=ci
             # - export taito_ci_phases=build
-            - taito artifact prepare:worker:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+            - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
           artifacts:
-            - worker.docker
-            - worker-tester.docker
+            - server.docker
+            - server-tester.docker
     # Deploy the changes to target environment
     - step:
         script:
@@ -98,11 +98,11 @@ pipelines:
       #       - export taito_mode=ci
       #       # - export taito_ci_phases=build
       #       - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-      - step: # worker release
+      - step: # server release
           script:
             - export taito_mode=ci
             # - export taito_ci_phases=build
-            - taito artifact release:worker:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+            - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
     # Release build
     - step:
         script:
@@ -144,14 +144,14 @@ pipelines:
   #         artifacts:
   #           - lab.docker
   #           - lab-tester.docker
-  #     - step: # worker prepare
+  #     - step: # server prepare
   #         script:
   #           - export taito_mode=ci
   #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact prepare:worker:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+  #           - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
   #         artifacts:
-  #           - worker.docker
-  #           - worker-tester.docker
+  #           - server.docker
+  #           - server-tester.docker
   #   # Deploy the changes to target environment
   #   - step:
   #       script:
@@ -186,11 +186,11 @@ pipelines:
   #           - export taito_mode=ci
   #           - export taito_ci_phases=deploy,test,release
   #           - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-  #     - step: # worker release
+  #     - step: # server release
   #         script:
   #           - export taito_mode=ci
   #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact release:worker:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+  #           - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
   #   # Release build
   #   - step:
   #       script:
