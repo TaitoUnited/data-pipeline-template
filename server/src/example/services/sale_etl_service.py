@@ -4,7 +4,7 @@ import time
 def listen():
     while True:
         print("Example implementation that just keeps on running.")
-        time.sleep(10)
+        time.sleep(60)
 
 
 def extract():
