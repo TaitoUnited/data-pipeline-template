@@ -1,6 +1,6 @@
 import time
 import threading
-from src.example.services import sale_etl_service
+from src.example.etl import sale_etl
 
 
 def add_thread(threads, target, daemon=True):
@@ -13,7 +13,7 @@ def get_worker_threads():
     # -----------------------------------------------------------------------
     # NOTE: Add your worker threads here. They will be executed continuously.
     # -----------------------------------------------------------------------
-    add_thread(threads, sale_etl_service.listen)
+    add_thread(threads, sale_etl.listen)
 
     return threads
 

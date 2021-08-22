@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 import sys
 from src.worker import start_worker
-from src.example.services import sale_etl_service
+from src.example.etl import sale_etl
 
 
 command = sys.argv[-1]
@@ -9,9 +9,9 @@ command = sys.argv[-1]
 if command == 'start_worker':
     start_worker(True)
 if command == 'sales_listen':
-    sale_etl_service.listen()
+    sale_etl.listen()
 elif command == 'sales_extract':
-    sale_etl_service.extract()
+    sale_etl.extract()
 else:
     print("Unknown command: " + command, file=sys.stderr)
     exit(1)
