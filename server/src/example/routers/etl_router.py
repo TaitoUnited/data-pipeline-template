@@ -1,7 +1,8 @@
 from flask import Blueprint, request, current_app
 from src.common.utils.flask import validate_api_key
-from ..etl import sale_etl
+from ..etl.sale_etl import SaleEtl
 
+sale_etl = SaleEtl()
 
 bp = Blueprint('etl', __name__, url_prefix='/example/etl')
 

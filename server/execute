@@ -1,16 +1,16 @@
 #!/usr/local/bin/python3 -u
 import sys
 from src import create_app
-from src.example.etl import sale_etl
+from src.example.etl.sale_etl import SaleEtl
 
 command = sys.argv[-1]
 app = create_app(single_command=True, connect_storage=False, init_routes=False)
 
 with app.app_context():
     if command == 'sales_extract':
-        sale_etl.extract()
+        SaleEtl().extract()
     elif command == 'sales_listen':
-        sale_etl.listen()
+        SaleEtl().listen()
     else:
         print("Unknown command: " + command, file=sys.stderr)
         exit(1)

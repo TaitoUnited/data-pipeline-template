@@ -1,12 +1,17 @@
 import time
-from ..daos import sale_dao
+from ..daos.sale_dao import SaleDao
 
 
-def listen():
-    while True:
-        print("Example implementation that just keeps on running.")
-        time.sleep(60)
+class SaleEtl:
 
+    def __init__(self, sale_dao=None):
+        self._sale_dao = sale_dao or SaleDao()
 
-def extract():
-    print("Example implementation that runs once.")
+    def listen(self):
+        while True:
+            print("Example implementation that just keeps on running.")
+            time.sleep(60)
+
+    def extract(self):
+        print("Example implementation that runs once.")
+        print(self._sale_dao.get_all())
