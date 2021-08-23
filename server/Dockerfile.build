@@ -60,7 +60,8 @@ RUN pip3 install --upgrade pip && \
 RUN apt-get -y purge build-essential libffi-dev && \
     apt-get -y autoremove
 
-COPY ${SERVICE_DIR}/start.sh \
+COPY ${SERVICE_DIR}/execute \
+     ${SERVICE_DIR}/start.sh \
      ${SERVICE_DIR}/supervi* \
      ${SERVICE_DIR}/uwsgi.ini \
      /service/
