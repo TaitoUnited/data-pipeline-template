@@ -65,6 +65,7 @@ taito_secrets="
 
 # Secrets for local environment only
 taito_local_secrets="
+  $taito_project-$taito_env-storage.secretKey:random
 "
 
 # Secrets for non-local environments
@@ -109,9 +110,15 @@ taito_secret_hints="
 # 'taito project generate'. Configuration instructions: TODO
 
 link_urls="
-  * bi[:ENV]=$taito_app_url/superset/welcome/ Superset BI (:ENV)
-  * lab[:ENV]=$taito_app_url/lab Jupyter Lab (:ENV)
-  * lessons[:ENV]=$taito_app_url/lab/tree/lessons/Contents.ipynb Lessons on Jupyter Lab (:ENV)
   * server[:ENV]=$taito_app_url/api/uptimez Server API status (:ENV)
   * git=https://$taito_vc_repository_url Git repository
 "
+
+if [[ ${taito_env} == "local" ]]; then
+  link_urls="
+    ${link_urls}
+    * bi[:ENV]=$taito_app_url/superset/welcome/ Superset BI (:ENV)
+    * lab[:ENV]=$taito_app_url/lab Jupyter Lab (:ENV)
+    * lessons[:ENV]=$taito_app_url/lab/tree/lessons/Contents.ipynb Lessons on Jupyter Lab (:ENV)
+  "
+fi
