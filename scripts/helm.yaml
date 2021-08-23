@@ -63,6 +63,8 @@ full-stack:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        API_KEY: ${taito_project}-${taito_env}-api.apiKey
+        API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
       env:
         MODE: api
         BASE_PATH: /api
@@ -103,6 +105,8 @@ full-stack:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        API_KEY: ${taito_project}-${taito_env}-api.apiKey
+        API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
       env:
         MODE: worker
         SENTRY_DSN: #sentryDSN
