@@ -1,9 +1,16 @@
-import random
-import string
+from flask import current_app
 
 
-# Returns secret value
 def get_secret_value(name):
+    """Returns secret value"""
+    value = current_app.config[name]
+    if value:
+        return value
+
+    current_app.logger.warning(
+        "Secret " + name + " not found in Flask config." +
+        "Fetching it from disk."
+    )
     f = None
     try:
         f = open("/run/secrets/" + name, "r")
@@ -12,8 +19,15 @@ def get_secret_value(name):
         f.close()
 
 
-# Returns random string
-def generate_random_string(prefix):
-    return prefix + ''.join(
-        random.choice(string.ascii_lowercase) for i in range(20)
-    )
+def filter_item_properties(items, propertyNames):
+    """Filters properties from items by propertyName"""
+    filtered = []
+    for item in items:
+        filtered.append({
+            propertyName: item[propertyName] for propertyName in propertyNames
+        })
+    return filtered
+
+
+def propertyExists(item, properyName):
+    return properyName in item and item[properyName]

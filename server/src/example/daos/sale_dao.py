@@ -1,5 +1,6 @@
 from psycopg2 import sql
 from src.common.setup import db
+from src.common.utils.misc import propertyExists
 
 
 class SaleDao:
@@ -10,16 +11,16 @@ class SaleDao:
         """
         query = "SELECT * FROM view_sales WHERE 1=1 "
 
-        if params['start_date']:
+        if propertyExists(params, 'start_date'):
             query += "AND date >= %(start_date)s "
 
-        if params['end_date']:
+        if propertyExists(params, 'end_date'):
             query += "AND date < %(end_date)s "
 
-        if params['offset']:
+        if propertyExists(params, 'offset'):
             query += "OFFSET %(offset)s "
 
-        if params['limit']:
+        if propertyExists(params, 'limit'):
             query += "LIMIT %(limit)s "
 
         return db.execute(sql.SQL(query), params=params)

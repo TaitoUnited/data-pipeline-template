@@ -1,5 +1,5 @@
 from flask import Blueprint, request, current_app
-from src.common.utils.flask import validate_api_key
+from src.common.utils.validate import validate_api_key
 from ..services.sale_etl_service import SaleEtlService
 
 sale_etl_service = SaleEtlService()

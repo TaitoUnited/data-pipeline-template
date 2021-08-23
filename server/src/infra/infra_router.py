@@ -1,4 +1,3 @@
-import typing
 from flask import Blueprint, current_app
 from src.common.setup import db
 
@@ -7,7 +6,7 @@ bp = Blueprint('infra', __name__)
 
 
 @bp.route('/config')
-def get_config() -> typing.Any:
+def get_config():
     """Return configs that are required by web user interface or 3rd
     party clients.
     """
@@ -19,14 +18,14 @@ def get_config() -> typing.Any:
 
 
 @bp.route('/healthz')
-def get_healtz() -> typing.Any:
+def get_healtz():
     """Polled by Kubernetes to check that the container is alive.
     """
     return {'status': 'OK'}
 
 
 @bp.route('/uptimez')
-def get_uptimez() -> typing.Any:
+def get_uptimez():
     """Polled by uptime monitor to check that the system is alive.
     """
     db.execute('SELECT 1')

@@ -1,6 +1,0 @@
-{
-  "scripts": {
-    "lint": "echo 'Disabled because currently run inside Taito CLI, was: flake8'",
-    "unit": "echo 'Disabled because currently run inside Taito CLI, was: pytest posts'"
-  }
-}

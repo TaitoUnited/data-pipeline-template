@@ -1,6 +1,6 @@
 from flask import Blueprint, request, current_app
-from src.common.utils.format import filter_item_properties
-from src.common.utils.flask import validate_api_key
+from src.common.utils.misc import filter_item_properties
+from src.common.utils.validate import validate_api_key
 from ..services.sale_service import SaleService
 
 sale_service = SaleService()

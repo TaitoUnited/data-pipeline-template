@@ -27,4 +27,8 @@ else
     # Start API
     supervisord --configuration supervisord.conf
   fi
+
+  if [ ${MODE} = "any" ] || [ "${MODE}" = "" ]; then
+    echo "Mode 'any' not allowed on production"
+  fi
 fi

@@ -9,7 +9,6 @@ from . import api
 def create_app(
     single_command=False,
     connect_database=True,
-    connect_storage=True,
     init_routes=True,
     test_config: typing.Optional[typing.Mapping[str, typing.Any]] = None,
 ) -> Flask:
@@ -50,11 +49,9 @@ def create_app(
 
     def setup_flask_worker() -> None:
         # Connect infra
-        from src.common.setup import db, storage
+        from src.common.setup import db
         if connect_database:
             db.connect(app)
-        if connect_storage:
-            storage.connect(app)
         if init_routes:
             api.register_rest_routes(app)
             api.register_graphql_resolvers(app)
