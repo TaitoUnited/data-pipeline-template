@@ -4,7 +4,7 @@ from src import create_app
 from src.example.services.sale_etl_service import SaleEtlService
 
 command = sys.argv[-1]
-app = create_app(single_command=True, connect_storage=False, init_routes=False)
+app = create_app(single_command=True, init_routes=False)
 
 with app.app_context():
     if command == 'sales_extract':

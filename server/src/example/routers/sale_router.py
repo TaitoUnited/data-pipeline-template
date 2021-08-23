@@ -17,7 +17,7 @@ def search():
     validate_api_key(request, current_app.config['API_KEY'])
 
     # Search
-    sales = sale_service.search({
+    result = sale_service.search({
         'start_date': request.args.get('start_date'),
         'end_date': request.args.get('end_date'),
         'offset': request.args.get('offset'),
@@ -28,10 +28,11 @@ def search():
     # NOTE: For optimal permormance we could filter these at sql query,
     # but for simplicity this is best handled at REST router and GraphQL
     # resolver.
+    data = result['data']
     properties = request.args.get('properties')
     if properties:
-        sales = filter_item_properties(sales, properties.split(','))
+        data = filter_item_properties(data, properties.split(','))
 
     # print(json.dumps({'joo': Decimal('1.1')}, cls=DecimalEncoder))
 
-    return {'data': sales}
+    return {'total': result['total'], 'data': data}

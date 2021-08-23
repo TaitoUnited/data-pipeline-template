@@ -1,6 +1,7 @@
 from psycopg2 import sql
 from src.common.setup import db
 from src.common.utils.misc import propertyExists
+from src.common.utils.db import add_paging, generate_count_query
 
 
 class SaleDao:
@@ -17,10 +18,10 @@ class SaleDao:
         if propertyExists(params, 'end_date'):
             query += "AND date < %(end_date)s "
 
-        if propertyExists(params, 'offset'):
-            query += "OFFSET %(offset)s "
+        query = add_paging(query, params)
 
-        if propertyExists(params, 'limit'):
-            query += "LIMIT %(limit)s "
-
-        return db.execute(sql.SQL(query), params=params)
+        count_query = generate_count_query(query)
+        return {
+          'total': db.execute(sql.SQL(count_query), params=params),
+          'data': db.execute(sql.SQL(query), params=params)
+        }
