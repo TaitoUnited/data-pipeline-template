@@ -3,6 +3,7 @@ import flask
 import psycopg2
 import psycopg2.pool
 import psycopg2.sql
+from psycopg2.extras import RealDictCursor
 import time
 import typing
 
@@ -82,7 +83,8 @@ def execute(
 ) -> typing.Union[DBRow, typing.List[DBRow]]:
     """Executes given statement with given params.
     """
-    with database_connection() as conn, conn.cursor() as cursor:
+    with database_connection() as conn, conn.cursor(
+            cursor_factory=RealDictCursor) as cursor:
         mogrified = cursor.mogrify(statement, params)
         flask.current_app.logger.debug(mogrified.decode('utf8'))
         cursor.execute(mogrified)

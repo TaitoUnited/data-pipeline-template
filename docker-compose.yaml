@@ -28,7 +28,6 @@ services:
       - "127.0.0.1:4229:9229"
     volumes:
       - "./server:/develop:delegated"
-      - "./shared:/develop/shared:delegated"
     tty: true
     secrets:
       - API_KEY
@@ -82,7 +81,6 @@ services:
       - "./lab/common:/home/jovyan/common:delegated"
       - "./lab/lessons:/home/jovyan/lessons:delegated"
       - "./lab/work:/home/jovyan/work:delegated"
-      - "./shared:/home/jovyan/shared:delegated"
     environment:
       JUPYTER_OPTIONS: --LabApp.token='' # Disables authentication
       COMMON_URL: http://localhost:8029

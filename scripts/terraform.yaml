@@ -15,6 +15,9 @@ settings:
           - name: ${taito_altdomain}
 
   services:
+    server:
+      uptimePath: /api/uptimez
+    
     bucket:
       type: bucket
       name: ${st_bucket_name}

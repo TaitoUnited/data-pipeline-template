@@ -1,22 +1,25 @@
-import psycopg2.sql
+from psycopg2 import sql
 from src.common.setup import db
 
 
 class SaleDao:
 
-    def get_all(self):
-        """Get all sales from the database.
+    def search(self, params):
+        """Search for sales
+           NOTE: This will fail if view_sales does not exist yet!
         """
-        try:
-            statement = psycopg2.sql.SQL('''
-                SELECT      *
-                FROM        view_sales
-                ORDER BY    created_at DESC
-                ''')
-            return db.execute(statement)
-        except Exception:
-            # Return some dummy data as the view_sales does not exist yet
-            return [
-                {'quantity': '1', 'price': '99'},
-                {'quantity': '2', 'price': '203'},
-            ]
+        query = "SELECT * FROM view_sales WHERE 1=1 "
+
+        if params['start_date']:
+            query += "AND date >= %(start_date)s "
+
+        if params['end_date']:
+            query += "AND date < %(end_date)s "
+
+        if params['offset']:
+            query += "OFFSET %(offset)s "
+
+        if params['limit']:
+            query += "LIMIT %(limit)s "
+
+        return db.execute(sql.SQL(query), params=params)

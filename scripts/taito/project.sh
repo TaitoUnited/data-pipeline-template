@@ -24,7 +24,7 @@ taito_environments="${template_default_environments}"
 # Configuration instructions:
 # TODO
 
-taito_containers="bi lab server storage"
+taito_containers="bi lab server storage worker"
 if [[ ${taito_env} == "local" ]]; then
   taito_containers="${taito_containers} database "
 fi
@@ -112,5 +112,6 @@ link_urls="
   * bi[:ENV]=$taito_app_url/superset/welcome/ Superset BI (:ENV)
   * lab[:ENV]=$taito_app_url/lab Jupyter Lab (:ENV)
   * lessons[:ENV]=$taito_app_url/lab/tree/lessons/Contents.ipynb Lessons on Jupyter Lab (:ENV)
+  * server[:ENV]=$taito_app_url/api/uptimez Server API status (:ENV)
   * git=https://$taito_vc_repository_url Git repository
 "

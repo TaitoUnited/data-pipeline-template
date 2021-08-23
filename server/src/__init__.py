@@ -2,6 +2,7 @@ import os
 import typing
 from flask import Flask
 from flask_cors import CORS
+from src.common.setup.json import CustomJSONEncoder
 from . import api
 
 
@@ -20,6 +21,7 @@ def create_app(
         'Content-Type', 'Content-Length', 'Content-Encoding'
     ]
     CORS(app)
+    app.json_encoder = CustomJSONEncoder
 
     if test_config is None:
         from src.common.setup import config

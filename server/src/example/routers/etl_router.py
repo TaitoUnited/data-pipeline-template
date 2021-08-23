@@ -1,25 +1,25 @@
 from flask import Blueprint, request, current_app
 from src.common.utils.flask import validate_api_key
-from ..etl.sale_etl import SaleEtl
+from ..services.sale_etl_service import SaleEtlService
 
-sale_etl = SaleEtl()
+sale_etl_service = SaleEtlService()
 
 bp = Blueprint('etl', __name__, url_prefix='/example/etl')
 
-# ---------------------------------------------------------------
-# NOTE: If these ETLs are long running processes and triggered
-# quite often with webhooks, consider using Celery to execute
-# them in a separate worker process. Otherwise they might impair
-# API performance as API has a limited amount of processes
-# available.
-# ---------------------------------------------------------------
+# NOTE: Consider using celery to run such ETL processes in the worker container
+# that are long-running processes and executed so often that multiple
+# webhook triggered ETL processes may be running simultaneously.
 
 
 @bp.route('/sales_extract', methods=('GET', 'POST'))
-def run():
+def sales_extract():
     """Run sales ETL process. API KEY can be given as X-API-KEY request header
        (recommended) or as api_key query parameter (for development).
     """
+    # Authorize
     validate_api_key(request, current_app.config['API_KEY'])
-    sale_etl.extract()
+
+    # Run ETL
+    sale_etl_service.extract()
+
     return {'status': 'OK'}

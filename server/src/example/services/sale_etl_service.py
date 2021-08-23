@@ -2,7 +2,7 @@ import time
 from ..daos.sale_dao import SaleDao
 
 
-class SaleEtl:
+class SaleEtlService:
 
     def __init__(self, sale_dao=None):
         self._sale_dao = sale_dao or SaleDao()
@@ -14,4 +14,4 @@ class SaleEtl:
 
     def extract(self):
         print("Example implementation that runs once.")
-        print(self._sale_dao.get_all())
+        print(self._sale_dao.search({}))
