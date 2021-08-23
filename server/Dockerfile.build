@@ -60,7 +60,10 @@ RUN pip3 install --upgrade pip && \
 RUN apt-get -y purge build-essential libffi-dev && \
     apt-get -y autoremove
 
-COPY ${SERVICE_DIR}/start.sh ${SERVICE_DIR}/supervi* ${SERVICE_DIR}/uwsgi.ini .
+COPY ${SERVICE_DIR}/start.sh \
+     ${SERVICE_DIR}/supervi* \
+     ${SERVICE_DIR}/uwsgi.ini \
+     /service/
 COPY ${SERVICE_DIR}/nginx.conf /etc/nginx/nginx.conf
 
 # Make due for the nginx pid file and unix socket
