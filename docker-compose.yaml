@@ -30,8 +30,6 @@ services:
       - "./server:/develop:delegated"
     tty: true
     secrets:
-      - DATABASE_PASSWORD
-      - STORAGE_SECRET_KEY
       - API_KEY
       - API_KEY_ETL
     environment:
@@ -55,6 +53,7 @@ services:
       DATABASE_PORT: ${db_database_port}
       DATABASE_NAME: ${db_database_name}
       DATABASE_USER: ${db_database_app_username}
+      DATABASE_PASSWORD: ${taito_default_password} # TODO: use secrets
       DATABASE_POOL_MIN: '1'
       DATABASE_POOL_MAX: '10'
       DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
@@ -62,7 +61,8 @@ services:
       DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
       STORAGE_TYPE: s3
       STORAGE_ENDPOINT: data-pipeline-template-storage:9000
-      STORAGE_ACCESS_KEY: minio # NOTE: This is a secret in remote environments
+      STORAGE_ACCESS_KEY: minio
+      STORAGE_SECRET_KEY: ${taito_default_password} # TODO: use secrets
       STORAGE_BUCKET: bucket
 
   # "LAB: Jupyter Lab"
@@ -81,9 +81,6 @@ services:
       - "./lab/common:/home/jovyan/common:delegated"
       - "./lab/lessons:/home/jovyan/lessons:delegated"
       - "./lab/work:/home/jovyan/work:delegated"
-    secret:
-      - DATABASE_PASSWORD
-      - STORAGE_SECRET_KEY
     environment:
       JUPYTER_OPTIONS: --LabApp.token='' # Disables authentication
       COMMON_URL: http://localhost:8029
@@ -91,9 +88,11 @@ services:
       DATABASE_PORT: ${db_database_port}
       DATABASE_NAME: ${db_database_name}
       DATABASE_USER: ${db_database_app_username}
+      DATABASE_PASSWORD: ${taito_default_password} # TODO: use secrets
       STORAGE_TYPE: s3
       STORAGE_ENDPOINT: data-pipeline-template-storage:9000
-      STORAGE_ACCESS_KEY: minio # NOTE: This is a secret in remote environments
+      STORAGE_ACCESS_KEY: minio
+      STORAGE_SECRET_KEY: ${taito_default_password} # TODO: use secrets
       STORAGE_BUCKET: bucket
 
   # "BI: Superset BI"
@@ -245,8 +244,6 @@ secrets:
     file: ./secrets/${taito_env}/${db_database_app_secret}
   BIDB_DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_bidb_app_secret}
-  STORAGE_SECRET_KEY:
-    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-storage.secretKey
   API_KEY:
     file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKey
   API_KEY_ETL:
