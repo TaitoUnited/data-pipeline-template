@@ -8,8 +8,10 @@ def get_secret_value(name):
         return value
 
     current_app.logger.warning(
-        "Secret " + name + " not found in Flask config." +
-        "Fetching it from disk."
+        "Secret "
+        + name
+        + " not found in Flask config."
+        + "Fetching it from disk."
     )
     f = None
     try:
@@ -23,9 +25,12 @@ def filter_item_properties(items, propertyNames):
     """Filters properties from items by propertyName"""
     filtered = []
     for item in items:
-        filtered.append({
-            propertyName: item[propertyName] for propertyName in propertyNames
-        })
+        filtered.append(
+            {
+                propertyName: item[propertyName]
+                for propertyName in propertyNames
+            }
+        )
     return filtered
 
 

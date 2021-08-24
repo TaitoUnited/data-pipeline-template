@@ -13,11 +13,12 @@ from azure.storage.queue import TextBase64EncodePolicy
 
 # Create storage bucket client
 def create_storage_bucket_client(
-        bucket_name,
-        bucket_type=os.environ['STORAGE_TYPE'],
-        key1=os.environ['STORAGE_ACCESS_KEY'],
-        key2=os.environ['STORAGE_SECRET_KEY'],
-        endpoint=os.environ.get('STORAGE_ENDPOINT')):
+    bucket_name,
+    bucket_type=os.environ["STORAGE_TYPE"],
+    key1=os.environ["STORAGE_ACCESS_KEY"],
+    key2=os.environ["STORAGE_SECRET_KEY"],
+    endpoint=os.environ.get("STORAGE_ENDPOINT"),
+):
     if bucket_type == "azure":
         return AzureStorageBucket(bucket_name, key1, key2)
 
@@ -31,8 +32,7 @@ def create_storage_bucket_client(
         raise Exception("Bucket type not supported: " + bucket_type)
 
 
-class StorageBucket():
-
+class StorageBucket:
     def __init__(self, bucket_name, key1, key2):
         self.bucket_name = bucket_name
         self.key1 = key1
@@ -45,24 +45,20 @@ class StorageBucket():
         raise Exception("get_object_contents not implemented")
 
     def listen_changes(
-            self,
-            file_path_prefix,
-            file_path_suffix,
-            func,
-            queue_name=None):
+        self, file_path_prefix, file_path_suffix, func, queue_name=None
+    ):
         raise Exception("listen_changes not implemented")
 
 
 class AzureStorageBucket(StorageBucket):
-
     def __init__(self, bucket_name, key1, key2):
         super().__init__(bucket_name, key1, key2)
         self.connect_str = (
-            "DefaultEndpointsProtocol=https;AccountName=" +
-            key1 +
-            ";AccountKey=" +
-            key2 +
-            ";EndpointSuffix=core.windows.net"
+            "DefaultEndpointsProtocol=https;AccountName="
+            + key1
+            + ";AccountKey="
+            + key2
+            + ";EndpointSuffix=core.windows.net"
         )
         self.blob_service = BlobServiceClient.from_connection_string(
             self.connect_str
@@ -88,17 +84,14 @@ class AzureStorageBucket(StorageBucket):
         return None
 
     def listen_changes(
-            self,
-            file_path_prefix,
-            file_path_suffix,
-            func,
-            queue_name=None):
+        self, file_path_prefix, file_path_suffix, func, queue_name=None
+    ):
 
         queue_client = QueueClient.from_connection_string(
             self.connect_str,
             queue_name or self.bucket_name,
             message_encode_policy=TextBase64EncodePolicy(),
-            message_decode_policy=TextBase64DecodePolicy()
+            message_decode_policy=TextBase64DecodePolicy(),
         )
         # TODO: implement without continuous poll loop
         while True:
@@ -107,108 +100,96 @@ class AzureStorageBucket(StorageBucket):
                 url = None
                 try:
                     content = json.loads(message.content)
-                    url = content['data']['url']
-                    url_split = content['data']['url'].split('/')
-                    file_path = '/'.join(url_split[4:])
+                    url = content["data"]["url"]
+                    url_split = content["data"]["url"].split("/")
+                    file_path = "/".join(url_split[4:])
                     if (
-                            not file_path_prefix or
-                            file_path.startswith(file_path_prefix)
-                        ) and (
-                            not file_path_suffix or
-                            file_path.endswith(file_path_suffix)
-                            ):
+                        not file_path_prefix
+                        or file_path.startswith(file_path_prefix)
+                    ) and (
+                        not file_path_suffix
+                        or file_path.endswith(file_path_suffix)
+                    ):
                         func(file_path)
                     queue_client.delete_message(
-                        message.id,
-                        message.pop_receipt
+                        message.id, message.pop_receipt
                     )
                 except Exception as e:
                     print(
                         "ERROR: Failed to handle storage message for " + url,
-                        file=sys.stderr
+                        file=sys.stderr,
                     )
                     print(e, file=sys.stderr)
             time.sleep(20)
 
 
 class S3StorageBucket(StorageBucket):
-
     def __init__(self, bucket_name, key1, key2, endpoint=None):
         super().__init__(bucket_name, key1, key2)
         self.endpoint = endpoint
 
         if not endpoint:
             self.client = boto3.client(
-                's3',
-                aws_access_key_id=key1,
-                aws_secret_access_key=key2
+                "s3", aws_access_key_id=key1, aws_secret_access_key=key2
             )
         else:
             self.client = boto3.client(
-                's3',
+                "s3",
                 aws_access_key_id=key1,
                 aws_secret_access_key=key2,
                 endpoint_url="http://" + endpoint,
-                use_ssl=False
+                use_ssl=False,
             )
 
     def list_objects(self, file_path_prefix):
         objects = []
         response = self.client.list_objects(
-            Bucket=self.bucket_name,
-            Prefix=file_path_prefix
+            Bucket=self.bucket_name, Prefix=file_path_prefix
         )
         if response is not None:
-            for obj in response['Contents']:
-                objects.append(obj['Key'])
+            for obj in response["Contents"]:
+                objects.append(obj["Key"])
         return objects
 
     def get_object_contents(self, file_path):
         obj = self.client.get_object(Bucket=self.bucket_name, Key=file_path)
         if obj is not None:
-            return obj['Body']
+            return obj["Body"]
         return None
 
     def listen_changes(
-            self,
-            file_path_prefix,
-            file_path_suffix,
-            func,
-            queue_name=None):
+        self, file_path_prefix, file_path_suffix, func, queue_name=None
+    ):
         raise Exception("listen_changes not implemented")
 
 
 class MinioStorageBucket(S3StorageBucket):
-
     def __init__(self, bucket_name, key1, key2, endpoint):
         super().__init__(bucket_name, key1, key2, endpoint)
 
     def listen_changes(
-            self,
-            file_path_prefix,
-            file_path_suffix,
-            func,
-            queue_name=None):
+        self, file_path_prefix, file_path_suffix, func, queue_name=None
+    ):
         minio_client = Minio(
             endpoint=self.endpoint,
             access_key=self.key1,
             secret_key=self.key2,
-            secure=False
+            secure=False,
         )
         events = minio_client.listen_bucket_notification(
             self.bucket_name,
             prefix=file_path_prefix,
             suffix=file_path_suffix,
-            events=["s3:ObjectCreated:*"]
+            events=["s3:ObjectCreated:*"],
         )
         for event in events:
-            file_path = ''
+            file_path = ""
             try:
-                file_path = event['Records'][0]['s3']['object']['key']
+                file_path = event["Records"][0]["s3"]["object"]["key"]
                 func(file_path)
             except Exception as e:
                 print(
                     "ERROR: Failed to handle storage event for " + file_path,
-                    file=sys.stderr
+                    file=sys.stderr,
                 )
                 print(e, file=sys.stderr)

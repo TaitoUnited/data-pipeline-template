@@ -3,11 +3,12 @@ import os
 
 # Prepares Spark for storage bucket connection
 def init_spark(
-        sc,
-        bucket_type=os.environ['STORAGE_TYPE'],
-        key1=os.environ['STORAGE_ACCESS_KEY'],
-        key2=os.environ['STORAGE_SECRET_KEY'],
-        endpoint=os.environ.get('STORAGE_ENDPOINT')):
+    sc,
+    bucket_type=os.environ["STORAGE_TYPE"],
+    key1=os.environ["STORAGE_ACCESS_KEY"],
+    key2=os.environ["STORAGE_SECRET_KEY"],
+    endpoint=os.environ.get("STORAGE_ENDPOINT"),
+):
     conf = sc._jsc.hadoopConfiguration()
 
     # AWS S3 or Minio with s3a
@@ -28,8 +29,7 @@ def init_spark(
     # Azure blob storage
     elif bucket_type == "azure":
         conf.set(
-            "fs.azure.account.key." + key1 + ".blob.core.windows.net",
-            key2
+            "fs.azure.account.key." + key1 + ".blob.core.windows.net", key2
         )
         return "wasbs://"
 

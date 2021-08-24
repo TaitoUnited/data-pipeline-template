@@ -10,8 +10,9 @@ def register_rest_routes(app: Flask):
     app.register_blueprint(infra_router.bp)
 
     # Register example routes on development mode only
-    if os.environ.get('FLASK_ENV') == 'development':
+    if os.environ.get("FLASK_ENV") == "development":
         from .example.routers import etl_router, sale_router
+
         app.register_blueprint(etl_router.bp)
         app.register_blueprint(sale_router.bp)
 

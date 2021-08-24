@@ -3,7 +3,6 @@ from ..daos.sale_dao import SaleDao
 
 
 class SaleEtlService:
-
     def __init__(self, sale_dao=None):
         self._sale_dao = sale_dao or SaleDao()
 
