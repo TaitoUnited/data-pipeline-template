@@ -19,7 +19,7 @@ Table of contents:
 - [Node.js](https://nodejs.org/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [Taito CLI](https://taitounited.github.io/taito-cli/) (or see [TAITOLESS.md](TAITOLESS.md))
-- Optional: Some editor plugins depending on technology (e.g. [ESLint](https://eslint.org/docs/user-guide/integrations#editors) and [Prettier](https://prettier.io/docs/en/editors.html) for JavaScript/TypeScript)
+- Optional: Some editor plugins depending on technology (e.g. Flake8 and Black plugins for linting and formatting Python code)
 
 ## Quick start
 
