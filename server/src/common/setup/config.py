@@ -46,7 +46,9 @@ class Config:
     API_BINDADDR = _config['API_BINDADDR']
     API_KEY = read_secret('API_KEY')
     API_KEY_ETL = read_secret('API_KEY_ETL')
-    CORS_ORIGINS = [x.strip() for x in _config['CORS_ORIGINS'].split(',')]
+    CORS_ORIGINS = [
+        x.strip() for x in _config['CORS_ORIGINS'].split(',')
+    ] if _config['CORS_ORIGINS'] else []
 
     # Sentry
     APP_SENTRY_DSN = _config.get('APP_SENTRY_DSN', '')
