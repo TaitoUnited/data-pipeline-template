@@ -5,6 +5,9 @@ from src.common.utils.db import add_paging, generate_count_query
 
 
 class SaleDao:
+    def __init__(self, database=None):
+        self._db = database or db
+
     def search(self, params):
         """Search for sales
         NOTE: This will fail if view_sales does not exist yet!
@@ -21,6 +24,6 @@ class SaleDao:
 
         count_query = generate_count_query(query)
         return {
-            "total": db.execute(sql.SQL(count_query), params=params),
-            "data": db.execute(sql.SQL(query), params=params),
+            "total": self._db.execute(sql.SQL(count_query), params=params),
+            "data": self._db.execute(sql.SQL(query), params=params),
         }
