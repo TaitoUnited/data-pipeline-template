@@ -8,7 +8,7 @@
     "taito-init": "taito -z ${taito_options} init:${taito_env} && npm run import-db-data",
     "taito-init:clean": "taito -z ${taito_options} init:${taito_env} --clean && npm run import-db-data",
     "import-db-data": "if [ -f ./database/data/${taito_env}.sql ]; then taito ${taito_options} db import:${taito_env} ./database/data/${taito_env}.sql; fi",
-    "taito-host-db-generate": "rm -rf docs/database &> /dev/null || true && mkdir -p docs/database && docker run --network $(echo ${PWD##*/} | tr '[:upper:]' '[:lower:]')_default -v `pwd`/docs/database:/output schemaspy/schemaspy:6.1.0 -t pgsql11 --port 5432 -u ${db_database_app_username} -db ${db_database_name} -host ${taito_project}-database -p ${taito_default_password}",
+    "taito-host-db-generate": "rm -rf docs/database &> /dev/null || true && mkdir -p docs/database && docker run --user $(id -u):$(id -g) --network $(echo ${PWD##*/} | tr '[:upper:]' '[:lower:]')_default -v `pwd`/docs/database:/output schemaspy/schemaspy:6.1.0 -t pgsql11 --port 5432 -u ${db_database_app_username} -db ${db_database_name} -host ${taito_project}-database -p ${taito_default_password}",
     "clean:storage": "if [ ${taito_env} = 'local' ] && [ -d storage ]; then echo Cleaning storage; rm -rf ./storage/bucket/*; rm -rf ./storage/.minio.sys/buckets/bucket/*/; fi",
     "info:local": "yes | taito ${taito_options} secret show:${taito_env}",
     "info": "yes | taito ${taito_options} secret show:${taito_env} basic-auth",
