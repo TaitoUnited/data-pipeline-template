@@ -62,7 +62,7 @@ full-stack:
         instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
         port: ${db_database_real_port} # For old gcp environments
         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
-      secretEnv: # TODO: use secrets
+      secretEnv:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
@@ -104,7 +104,7 @@ full-stack:
         instance: ${taito_zone}:${taito_provider_region}:${db_database_instance} # For old gcp environments
         port: ${db_database_real_port} # For old gcp environments
         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
-      secretEnv: # TODO: use secrets
+      secretEnv:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
