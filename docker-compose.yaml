@@ -110,14 +110,13 @@ services:
       - data-pipeline-template-database
     ports:
       - 8080
-    secrets:
-      - DATABASE_PASSWORD
     environment:
       DATABASE_DIALECT: postgresql+psycopg2
       DATABASE_HOST: data-pipeline-template-database
       DATABASE_PORT: ${db_bidb_port}
       DATABASE_DB: ${db_bidb_name}
       DATABASE_USER: ${db_bidb_app_username}
+      DATABASE_PASSWORD: ${taito_default_password} # TODO: use secrets
       REDIS_HOST: data-pipeline-template-redis
       REDIS_PORT: 6379
 
