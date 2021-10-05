@@ -111,9 +111,9 @@ class AzureStorageBucket(StorageBucket):
                         or file_path.endswith(file_path_suffix)
                     ):
                         func(file_path)
-                    queue_client.delete_message(
-                        message.id, message.pop_receipt
-                    )
+                        queue_client.delete_message(
+                            message.id, message.pop_receipt
+                        )
                 except Exception as e:
                     print(
                         "ERROR: Failed to handle storage message for " + url,
