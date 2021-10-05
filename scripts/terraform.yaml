@@ -1,7 +1,7 @@
 # Here you can configure all your cloud resources (non-Kubernetes resources)
 # with a cloud-agnostic and developer-friendly YAML format
 
-# NOTE: terraform/examples.yaml for some examples.
+# NOTE: See terraform/examples.yaml for some examples.
 
 settings:
   backupEnabled: false
@@ -17,7 +17,7 @@ settings:
   services:
     server:
       uptimePath: /api/uptimez
-    
+
     bucket:
       type: bucket
       name: ${st_bucket_name}
