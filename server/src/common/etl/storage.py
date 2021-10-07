@@ -4,6 +4,7 @@ import sys
 import time
 import boto3
 import json
+import random
 from minio import Minio
 from azure.storage.blob import BlobServiceClient
 from azure.storage.queue import QueueClient
@@ -95,7 +96,7 @@ class AzureStorageBucket(StorageBucket):
         )
         # TODO: implement without continuous poll loop
         while True:
-            messages = queue_client.receive_messages()
+            messages = queue_client.receive_messages(visibility_timeout=120)
             for message in messages:
                 url = None
                 try:
@@ -120,7 +121,7 @@ class AzureStorageBucket(StorageBucket):
                         file=sys.stderr,
                     )
                     print(e, file=sys.stderr)
-            time.sleep(20)
+            time.sleep(random.randint(20, 80))
 
 
 class S3StorageBucket(StorageBucket):
