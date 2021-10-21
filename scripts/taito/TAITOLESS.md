@@ -116,6 +116,10 @@ If you want to setup the application environments or run CI/CD steps without Tai
    export taito_target_env=ENV
    . taito-config.sh
 
+   # Create a merged yaml file that includes all the values for the environment
+   # without any environment variables and delete the unmerged yaml files.
+   nano scripts/terraform/terraform-${taito_target_env}-merged.yaml
+
    # Create basic resources (e.g. storage buckets)
    cd scripts/terraform/${taito_provider}
    envsubst < templates/backend.tfvars > ${env}/backend.tfvars
@@ -123,8 +127,6 @@ If you want to setup the application environments or run CI/CD steps without Tai
    terraform apply -state=${env}/terraform.tfstate
 
    # Serverless AWS only: Create deployment (e.g. api gateway and functions)
-   # First create a merged yaml file that includes all the values (no env vars)
-   nano scripts/terraform/terraform-${taito_target_env}-merged.yaml
    cd scripts/terraform/${taito_provider}-deploy
    envsubst < templates/backend.tfvars > ${env}/backend.tfvars
    terraform init -reconfigure -backend-config=${env}/backend.tfvars
@@ -136,6 +138,8 @@ If you want to setup the application environments or run CI/CD steps without Tai
    terraform init -reconfigure -backend-config=${env}/backend.tfvars
    terraform apply -state=${env}/terraform.tfstate
    ```
+
+   NOTE: After environment has been created, you can deploy changes to it by running appropriate terraform command: `terraform apply -state=$ENV/terraform.tfstate`
 
 ### Taitoless CI/CD
 
