@@ -145,7 +145,7 @@ locals {
 
 module "aws" {
   source  = "TaitoUnited/project-resources/aws"
-  version = "3.0.0"
+  version = "3.13.0"
 
   # Create flags
   # TODO: create_cicd_service_account         = var.create_cicd_service_account
