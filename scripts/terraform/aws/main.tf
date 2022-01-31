@@ -117,13 +117,13 @@ locals {
               name = "taito-developer"
               id = "taito-developer-for-${var.taito_project}-${var.taito_env}-cicd"
               namespace = null
-              subjects = [ "user:${module.azure.cicd_service_principal_object_id}" ]
+              subjects = [ "user:${module.aws.cicd_service_account_arn}" ]
             },
             {
               name = "taito-secret-viewer"
               id = "taito-secret-viewer-for-${var.taito_project}-${var.taito_env}-cicd"
               namespace = "common"
-              subjects = [ "user:${module.azure.cicd_service_principal_object_id}" ]
+              subjects = [ "user:${module.aws.cicd_service_account_arn}" ]
             },
         ]
         : [],
@@ -135,7 +135,7 @@ locals {
                 name = "taito-proxyer"
                 id = "taito-proxyer-for-${var.taito_project}-${var.taito_env}-cicd"
                 namespace = "db-proxy"
-                subjects = [ "user:${module.azure.cicd_service_principal_object_id}" ]
+                subjects = [ "user:${module.aws.cicd_service_account_arn}" ]
               },
           ]
           : [],
@@ -145,15 +145,16 @@ locals {
 
 module "aws" {
   source  = "TaitoUnited/project-resources/aws"
-  version = "3.13.0"
+  version = "3.13.1"
 
   # Create flags
-  # TODO: create_cicd_service_account         = var.create_cicd_service_account
+  create_cicd_service_account         = var.create_cicd_service_account
   create_domain                       = true
   create_domain_certificate           = true
   create_storage_buckets              = true
   create_databases                    = true
   create_in_memory_databases          = true
+  create_queues                       = true
   create_topics                       = true
   create_service_accounts             = true
   create_uptime_checks                = var.taito_uptime_provider == "aws"
@@ -161,25 +162,32 @@ module "aws" {
     var.taito_container_registry_provider == "aws" && var.taito_env == "dev"
   )
 
-  # Provider
+  # AWS provider
   account_id                  = var.taito_provider_org_id
   region                      = var.taito_provider_region
   user_profile                = coalesce(var.taito_provider_user_profile, var.taito_organization)
 
-  # Project
+  # Labels
   zone_name                   = var.taito_zone
   project                     = var.taito_project
   namespace                   = var.taito_namespace
   env                         = var.taito_env
 
   # Container images
-  container_image_repository_path     = var.taito_vc_repository
-  container_image_target_types        = [ "static", "container", "function" ]
-  additional_container_images         = (
-    var.taito_ci_cache_all_targets_with_docker
-    ? var.taito_targets
-    : var.taito_containers
-  )
+  container_image_repository_path      = var.taito_vc_repository
+  container_image_target_types         = [ "container" ]
+  container_image_builder_target_types = [ "static", "container", "function" ]
+
+  # Secrets
+  cicd_secrets_path           = var.taito_cicd_secrets_path
+
+  # Buckets
+  static_assets_bucket        = var.taito_static_assets_bucket
+  static_assets_path          = var.taito_static_assets_path
+  functions_bucket            = var.taito_functions_bucket
+  functions_path              = var.taito_functions_path
+  state_bucket                = var.taito_state_bucket
+  state_path                  = var.taito_state_path
 
   # Uptime
   uptime_channels                 = var.taito_uptime_channels
