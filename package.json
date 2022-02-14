@@ -1,6 +1,7 @@
 {
   "name": "data-pipeline-template",
   "scripts": {
+    "prepare": "husky install",
     "install-clean": "echo '# Nothing to cleanup'",
     "install-ci": "echo '# Nothing to install'",
     "install-dev": "echo '# Nothing to install'",
@@ -23,15 +24,11 @@
     "project-show": "cat PROJECT.md | sed -n -e '/^## Contacts.*$/,/^#.*$/{ /^## Contacts.*$/d; /^#.*$/d; p; }'",
     "precommit:branch": "if git-branch-is -q test || git-branch-is -q uat || git-branch-is -q qa || git-branch-is -q stag || git-branch-is -q canary || git-branch-is -q cana || git-branch-is -q prod || git-branch-is -q master; then echo 'ERROR: You cannot commit changes directly to this environment branch. Only fast-forward merge is allowed.' && echo && exit 1; fi",
     "precommit:lint": "echo 'SKIP: Skipping linting on commit since we are already continuously linting during development.'",
+    "husky:commit-msg": "commitlint --edit",
+    "husky:pre-commit": "if [ \"$taito_mode\" != 'ci' ]; then npm-run-all precommit:branch precommit:lint; fi",
+    "husky:pre-push": "if [ \"$taito_mode\" != 'ci' ]; then npm-run-all --parallel lint unit; fi",
     "release-pre:prod": "semantic-release --dry-run",
     "release-post:prod": "semantic-release --no-ci"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "if [ \"$taito_mode\" != 'ci' ]; then npm-run-all precommit:branch precommit:lint; fi",
-      "pre-push": "if [ \"$taito_mode\" != 'ci' ]; then npm-run-all --parallel lint unit; fi"
-    }
   },
   "commitlint": {
     "extends": [
