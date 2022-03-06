@@ -60,15 +60,15 @@ fi
 
 # Network
 taito_vpn_enabled=${default_vpn_enabled}
-taito_network_tags='${default_network_tags}'
-taito_function_subnet_tags='${default_function_subnet_tags}'
-taito_function_security_group_tags='${default_function_security_group_tags}'
-taito_cache_subnet_tags='${default_cache_subnet_tags}'
-taito_cache_security_group_tags='${default_cache_security_group_tags}'
+taito_network_tags="${default_network_tags}"
+taito_function_subnet_tags="${default_function_subnet_tags}"
+taito_function_security_group_tags="${default_function_security_group_tags}"
+taito_cache_subnet_tags="${default_cache_subnet_tags}"
+taito_cache_security_group_tags="${default_cache_security_group_tags}"
 
 # Policies
-taito_cicd_policies='${default_cicd_policies}'
-taito_gateway_policies='${default_gateway_policies}'
+taito_cicd_policies="${default_cicd_policies}"
+taito_gateway_policies="${default_gateway_policies}"
 
 # Secrets location
 taito_provider_secrets_location=${default_provider_secrets_location}
@@ -77,7 +77,7 @@ taito_cicd_secrets_path=${default_cicd_secrets_path}
 # Buckets
 taito_state_bucket=${default_state_bucket}
 taito_functions_bucket=${default_functions_bucket}
-taito_static_assets_bucket=${default_public_bucket}
+taito_static_assets_bucket=${default_static_assets_bucket}
 
 # URLs
 taito_domain=$taito_project-$taito_target_env.${default_domain}
@@ -255,8 +255,8 @@ case $taito_env in
     taito_cache_security_group_tags="${default_cache_security_group_tags_prod}"
 
     # Policies
-    taito_cicd_policies='${default_cicd_policies_prod}'
-    taito_gateway_policies='${default_gateway_policies_prod}'
+    taito_cicd_policies="${default_cicd_policies_prod}"
+    taito_gateway_policies="${default_gateway_policies_prod}"
 
     # Secrets location
     taito_provider_secrets_location=${default_provider_secrets_location_prod}
@@ -300,7 +300,7 @@ case $taito_env in
     # Storages
     taito_state_bucket=${default_state_bucket_prod}
     taito_functions_bucket=${default_functions_bucket_prod}
-    taito_static_assets_bucket=${default_public_bucket_prod}
+    taito_static_assets_bucket=${default_static_assets_bucket_prod}
 
     # Storage defaults
     taito_default_storage_class="${default_storage_class_prod}"
@@ -368,8 +368,8 @@ case $taito_env in
     taito_cache_security_group_tags="${default_cache_security_group_tags_prod}"
 
     # Policies
-    taito_cicd_policies='${default_cicd_policies_prod}'
-    taito_gateway_policies='${default_gateway_policies_prod}'
+    taito_cicd_policies="${default_cicd_policies_prod}"
+    taito_gateway_policies="${default_gateway_policies_prod}"
 
     # Secrets location
     taito_provider_secrets_location=${default_provider_secrets_location_prod}
@@ -396,6 +396,7 @@ case $taito_env in
     ssh_db_proxy_host="${default_bastion_public_ip_prod}"
     if [[ $db_database_type == "pg" ]]; then
       db_database_real_host="${default_postgres_host_prod}"
+      db_database_real_port="${default_postgres_port_prod}"
       db_database_username_suffix=${default_postgres_username_suffix_prod}
       db_database_ssl_enabled="${default_postgres_ssl_enabled_prod:-true}"
       db_database_ssl_client_cert_enabled="${default_postgres_ssl_client_cert_enabled_prod:-false}"
@@ -403,6 +404,7 @@ case $taito_env in
       db_database_proxy_ssl_enabled="${default_postgres_proxy_ssl_enabled_prod:-true}"
     elif [[ $db_database_type == "mysql" ]]; then
       db_database_real_host="${default_mysql_host_prod}"
+      db_database_real_port="${default_mysql_port_prod}"
       db_database_username_suffix=${default_mysql_username_suffix_prod}
       db_database_ssl_enabled="${default_mysql_ssl_enabled_prod:-true}"
       db_database_ssl_client_cert_enabled="${default_mysql_ssl_client_cert_enabled_prod:-false}"
@@ -413,7 +415,7 @@ case $taito_env in
     # Storages
     taito_state_bucket=${default_state_bucket_prod}
     taito_functions_bucket=${default_functions_bucket_prod}
-    taito_static_assets_bucket=${default_public_bucket_prod}
+    taito_static_assets_bucket=${default_static_assets_bucket_prod}
 
     # Storage defaults
     taito_default_storage_class="${default_storage_class_prod}"

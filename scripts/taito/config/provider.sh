@@ -52,7 +52,7 @@ case $taito_provider in
     "
 
     # Secrets
-    taito_secret_resource_path="arn:aws:ssm:${taito_provider_region}:${taito_provider_org_id}:parameter/${taito_zone}/${taito_namespace}"
+    taito_secret_resource_path="arn:aws:secretsmanager:${taito_provider_region}:${taito_provider_org_id}:secret:/${taito_zone}/${taito_namespace}"
     taito_secret_name_path="/${taito_zone}/${taito_namespace}"
 
     # Kubernetes
@@ -432,7 +432,7 @@ if [[ ${taito_vpn_enabled} != "true" ]] &&
   ssh_forward_for_db="${ssh_db_proxy}"
 
   ssh_db_proxy_enabled=true
-  if [[ ${taito_provider} == "aws" ]]; then
+  if [[ ${taito_ci_provider} == "aws" ]]; then
     # CI/CD has direct VPC access on AWS
     ci_disable_db_proxy="true"
   fi
