@@ -19,181 +19,179 @@ definitions:
 pipelines:
   branches:
     # TODO: support for feature/* (cancel build if not included in taito_environments)
-    '{dev,test,uat,stag,canary,master}':
-    # Prepare build
-    - step:
-        script:
-          - export taito_mode=ci
-          # - export taito_ci_phases=build
-          # TODO: Cancel other ongoing builds for $ENV
-          # - taito deployment cancel:$ENV $CURRENT_BUILD_ID
-          - taito build prepare:$BITBUCKET_BRANCH
-        artifacts:
-          - taitoflag_version
-          - taitoflag_images_exist
-    # Prepare artifacts in parallel
-    - parallel:
-      # - step: # bi prepare
-      #     script:
-      #       - export taito_mode=ci
-      #       # - export taito_ci_phases=build
-      #       - taito artifact prepare:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
-      #     artifacts:
-      #       - bi.docker
-      #       - bi-tester.docker
-      # - step: # lab prepare
-      #     script:
-      #       - export taito_mode=ci
-      #       # - export taito_ci_phases=build
-      #       - taito artifact prepare:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
-      #     artifacts:
-      #       - lab.docker
-      #       - lab-tester.docker
-      - step: # server prepare
+    "{dev,test,uat,stag,canary,master}":
+      # Prepare build
+      - step:
           script:
             - export taito_mode=ci
             # - export taito_ci_phases=build
-            - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+            # TODO: Cancel other ongoing builds for $ENV
+            # - taito deployment cancel:$ENV $CURRENT_BUILD_ID
+            - taito build prepare:$BITBUCKET_BRANCH
           artifacts:
-            - server.docker
-            - server-tester.docker
-    # Deploy the changes to target environment
-    - step:
-        script:
-          - export taito_mode=ci
-          # - export taito_ci_phases=build
-          - taito db deploy:$BITBUCKET_BRANCH
-    - step:
-        script:
-          - export taito_mode=ci
-          # - export taito_ci_phases=build
-          - taito deployment deploy:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-        # TODO: revert deployment on fail
-        # after-script:
-        #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito deployment revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
-        #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito db revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
-    # Test and verify deployment
-    - step:
-        script:
-          - export taito_mode=ci
-          # - export taito_ci_phases=build
-          - "taito -v artifact load: tester"
-          - taito deployment wait:$BITBUCKET_BRANCH
-          - export taito_image='${_TEMPLATE_DEFAULT_TAITO_IMAGE}'
-          - taito test:$BITBUCKET_BRANCH
-          - taito deployment verify:$BITBUCKET_BRANCH
-        # # TODO: revert deployment on fail
-        # after-script:
-        #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito deployment revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
-        #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito db revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
-    # Release artifacts (push previously built container images with a new tag)
-    - parallel:
-      # - step: # bi release
-      #     script:
-      #       - export taito_mode=ci
-      #       # - export taito_ci_phases=build
-      #       - taito artifact release:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-      # - step: # lab release
-      #     script:
-      #       - export taito_mode=ci
-      #       # - export taito_ci_phases=build
-      #       - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-      - step: # server release
+            - taitoflag_version
+            - taitoflag_images_exist
+      # Prepare artifacts in parallel
+      - parallel:
+          # - step: # bi prepare
+          #     script:
+          #       - export taito_mode=ci
+          #       # - export taito_ci_phases=build
+          #       - taito artifact prepare:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+          #     artifacts:
+          #       - bi.docker
+          #       - bi-tester.docker
+          # - step: # lab prepare
+          #     script:
+          #       - export taito_mode=ci
+          #       # - export taito_ci_phases=build
+          #       - taito artifact prepare:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+          #     artifacts:
+          #       - lab.docker
+          #       - lab-tester.docker
+          - step: # server prepare
+              script:
+                - export taito_mode=ci
+                # - export taito_ci_phases=build
+                - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+              artifacts:
+                - server.docker
+                - server-tester.docker
+      # Deploy the changes to target environment
+      - step:
           script:
             - export taito_mode=ci
             # - export taito_ci_phases=build
-            - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-    # Release build
-    - step:
-        script:
-          - export taito_mode=ci
-          # - export taito_ci_phases=build
-          - taito build release:$BITBUCKET_BRANCH
-
-
+            - taito db deploy:$BITBUCKET_BRANCH
+      - step:
+          script:
+            - export taito_mode=ci
+            # - export taito_ci_phases=build
+            - taito deployment deploy:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+          # TODO: revert deployment on fail
+          # after-script:
+          #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito deployment revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
+          #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito db revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
+      # Test and verify deployment
+      - step:
+          script:
+            - export taito_mode=ci
+            # - export taito_ci_phases=build
+            - "taito -v artifact load: tester"
+            - taito deployment wait:$BITBUCKET_BRANCH
+            - export taito_image='${_TEMPLATE_DEFAULT_TAITO_IMAGE}'
+            - taito test:$BITBUCKET_BRANCH
+            - taito deployment verify:$BITBUCKET_BRANCH
+          # # TODO: revert deployment on fail
+          # after-script:
+          #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito deployment revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
+          #   - [ $BITBUCKET_EXIT_CODE != 0 ] && taito db revert:$BITBUCKET_BRANCH $BITBUCKET_COMMIT || :
+      # Release artifacts (push previously built container images with a new tag)
+      - parallel:
+          # - step: # bi release
+          #     script:
+          #       - export taito_mode=ci
+          #       # - export taito_ci_phases=build
+          #       - taito artifact release:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+          # - step: # lab release
+          #     script:
+          #       - export taito_mode=ci
+          #       # - export taito_ci_phases=build
+          #       - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+          - step: # server release
+              script:
+                - export taito_mode=ci
+                # - export taito_ci_phases=build
+                - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+      # Release build
+      - step:
+          script:
+            - export taito_mode=ci
+            # - export taito_ci_phases=build
+            - taito build release:$BITBUCKET_BRANCH
 #--------------------------------------------------------
 # CUSTOM: Example for separate deploy+test+release phase
 #--------------------------------------------------------
 
-  # custom:
-  #   deploy:
-  #   # Prepare build
-  #   - step:
-  #       script:
-  #         - export taito_mode=ci
-  #         - export taito_ci_phases=deploy,test,release
-  #         - taito build prepare:$BITBUCKET_BRANCH
-  #       artifacts:
-  #         - taitoflag_version
-  #         - taitoflag_images_exist
-  #   # Prepare artifacts in parallel
-  #   - parallel:
-  #     - step: # bi prepare
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact prepare:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
-  #         artifacts:
-  #           - bi.docker
-  #           - bi-tester.docker
-  #     - step: # lab prepare
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact prepare:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
-  #         artifacts:
-  #           - lab.docker
-  #           - lab-tester.docker
-  #     - step: # server prepare
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
-  #         artifacts:
-  #           - server.docker
-  #           - server-tester.docker
-  #   # Deploy the changes to target environment
-  #   - step:
-  #       script:
-  #         - export taito_mode=ci
-  #         - export taito_ci_phases=deploy,test,release
-  #         - taito db deploy:$BITBUCKET_BRANCH
-  #   - step:
-  #       script:
-  #         - export taito_mode=ci
-  #         - export taito_ci_phases=deploy,test,release
-  #         - taito deployment deploy:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-  #         # TODO: revert deployment on fail
-  #   # Test and verify deployment
-  #   - step:
-  #       script:
-  #         - export taito_mode=ci
-  #         - export taito_ci_phases=deploy,test,release
-  #         - "taito -v artifact load: tester"
-  #         - taito deployment wait:$BITBUCKET_BRANCH
-  #         - taito test:$BITBUCKET_BRANCH
-  #         - taito deployment verify:$BITBUCKET_BRANCH
-  #         # # TODO: revert deployment on fail
-  #   # Release artifacts (push previously built container images with a new tag)
-  #   - parallel:
-  #     - step: # bi release
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact release:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-  #     - step: # lab release
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-  #     - step: # server release
-  #         script:
-  #           - export taito_mode=ci
-  #           - export taito_ci_phases=deploy,test,release
-  #           - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
-  #   # Release build
-  #   - step:
-  #       script:
-  #         - export taito_mode=ci
-  #         - export taito_ci_phases=deploy,test,release
-  #         - taito build release:$BITBUCKET_BRANCH
+# custom:
+#   deploy:
+#   # Prepare build
+#   - step:
+#       script:
+#         - export taito_mode=ci
+#         - export taito_ci_phases=deploy,test,release
+#         - taito build prepare:$BITBUCKET_BRANCH
+#       artifacts:
+#         - taitoflag_version
+#         - taitoflag_images_exist
+#   # Prepare artifacts in parallel
+#   - parallel:
+#     - step: # bi prepare
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact prepare:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+#         artifacts:
+#           - bi.docker
+#           - bi-tester.docker
+#     - step: # lab prepare
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact prepare:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+#         artifacts:
+#           - lab.docker
+#           - lab-tester.docker
+#     - step: # server prepare
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact prepare:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT true
+#         artifacts:
+#           - server.docker
+#           - server-tester.docker
+#   # Deploy the changes to target environment
+#   - step:
+#       script:
+#         - export taito_mode=ci
+#         - export taito_ci_phases=deploy,test,release
+#         - taito db deploy:$BITBUCKET_BRANCH
+#   - step:
+#       script:
+#         - export taito_mode=ci
+#         - export taito_ci_phases=deploy,test,release
+#         - taito deployment deploy:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+#         # TODO: revert deployment on fail
+#   # Test and verify deployment
+#   - step:
+#       script:
+#         - export taito_mode=ci
+#         - export taito_ci_phases=deploy,test,release
+#         - "taito -v artifact load: tester"
+#         - taito deployment wait:$BITBUCKET_BRANCH
+#         - taito test:$BITBUCKET_BRANCH
+#         - taito deployment verify:$BITBUCKET_BRANCH
+#         # # TODO: revert deployment on fail
+#   # Release artifacts (push previously built container images with a new tag)
+#   - parallel:
+#     - step: # bi release
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact release:bi:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+#     - step: # lab release
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact release:lab:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+#     - step: # server release
+#         script:
+#           - export taito_mode=ci
+#           - export taito_ci_phases=deploy,test,release
+#           - taito artifact release:server:$BITBUCKET_BRANCH $BITBUCKET_COMMIT
+#   # Release build
+#   - step:
+#       script:
+#         - export taito_mode=ci
+#         - export taito_ci_phases=deploy,test,release
+#         - taito build release:$BITBUCKET_BRANCH

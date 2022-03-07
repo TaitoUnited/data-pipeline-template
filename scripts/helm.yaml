@@ -10,10 +10,10 @@ global:
   publicPort: 443
   logProvider: ${taito_logging_provider}
   logFormat: ${taito_logging_format}
-  logLevel: info    # trace, debug, info, warn, error, fatal
+  logLevel: info # trace, debug, info, warn, error, fatal
   registry: ${taito_container_registry}
-  imagePullPolicy: ''
-  debug: 'false'
+  imagePullPolicy: ""
+  debug: "false"
 
 full-stack:
   networkPolicyEnabled: true
@@ -46,14 +46,13 @@ full-stack:
       COMMON_ENV: ${taito_env}
 
   services:
-
     server:
       paths:
         - path: /api
           clientMaxBodySize: 1m
       egress:
         # Allow outbound connections to database and to any public ip address
-        - ip: '${db_database_real_host}/32'
+        - ip: "${db_database_real_host}/32"
         - ip: public
       livenessInitialDelay: 120
       tty: true
@@ -71,16 +70,16 @@ full-stack:
       env:
         MODE: api
         BASE_PATH: /api
-        API_PORT: '8080'
-        API_BINDADDR: '0.0.0.0'
+        API_PORT: "8080"
+        API_BINDADDR: "0.0.0.0"
         CORS_ORIGINS: # Comma separated list of allowed origins
         SENTRY_DSN: #sentryDSN
-        DATABASE_HOST: '${db_database_real_host}'
-        DATABASE_PORT: '${db_database_real_port}'
+        DATABASE_HOST: "${db_database_real_host}"
+        DATABASE_PORT: "${db_database_real_port}"
         DATABASE_NAME: ${db_database_name}
         DATABASE_USER: ${db_database_app_username}
-        DATABASE_POOL_MIN: '0'
-        DATABASE_POOL_MAX: '5'
+        DATABASE_POOL_MIN: "0"
+        DATABASE_POOL_MAX: "5"
         DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
@@ -93,7 +92,7 @@ full-stack:
       image: ${taito_container_registry}/server:${taito_build_image_tag}
       egress:
         # Allow outbound connections to database and to any public ip address
-        - ip: '${db_database_real_host}/32'
+        - ip: "${db_database_real_host}/32"
         - ip: public
       livenessCommand:
         - python3
@@ -113,12 +112,12 @@ full-stack:
       env:
         MODE: worker
         SENTRY_DSN: #sentryDSN
-        DATABASE_HOST: '${db_database_real_host}'
-        DATABASE_PORT: '${db_database_real_port}'
+        DATABASE_HOST: "${db_database_real_host}"
+        DATABASE_PORT: "${db_database_real_port}"
         DATABASE_NAME: ${db_database_name}
         DATABASE_USER: ${db_database_app_username}
-        DATABASE_POOL_MIN: '0'
-        DATABASE_POOL_MAX: '5'
+        DATABASE_POOL_MIN: "0"
+        DATABASE_POOL_MAX: "5"
         DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
