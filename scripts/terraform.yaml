@@ -23,6 +23,7 @@ settings:
       name: ${st_bucket_name}
       location: ${taito_default_storage_location}
       storageClass: ${taito_default_storage_class}
+      versioningEnabled: true
       queues:
         - name: ${st_bucket_name}
           events:
