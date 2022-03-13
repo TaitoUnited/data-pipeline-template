@@ -20,6 +20,8 @@ services:
     build:
       context: ./server
       dockerfile: ${dockerfile}
+      args:
+        USER_UID: ${taito_host_user_uid}
     restart: unless-stopped
     networks:
       - default
