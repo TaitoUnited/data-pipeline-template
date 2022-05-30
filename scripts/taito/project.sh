@@ -24,12 +24,12 @@ taito_environments="${template_default_environments}"
 # Configuration instructions:
 # TODO
 
-taito_containers="bi lab server storage worker"
+taito_containers=" bi lab server storage worker "
 if [[ ${taito_env} == "local" ]]; then
   taito_containers="${taito_containers} database "
 fi
 taito_static_contents=
-taito_databases="database bidb"
+taito_databases=" database bidb "
 taito_networks="default"
 
 # Buckets

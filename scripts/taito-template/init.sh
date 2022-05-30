@@ -7,10 +7,57 @@ if [[ ${taito_verbose:-} == "true" ]]; then
   set -x
 fi
 
-# Remove the example site
-rm -rf www/site
-sed -i '/\/site\/node_modules" # FOR GATSBY ONLY/d' docker-compose.yaml
-sed -i '/\/site\/node_modules" # FOR GATSBY ONLY/d' docker-compose-remote.yaml
+echo
+echo
+echo "######################"
+echo "#    Choose stack"
+echo "######################"
+echo
+echo "If you are unsure, just accept the defaults."
+echo
+
+function prune () {
+  local message=$1
+  local name=$2
+
+  echo
+  read -r -t 1 -n 1000 || :
+  read -p "$message" -n 1 -r confirm
+  if ( [[ "$message" == *"[y/N]"* ]] && ! [[ "${confirm}" =~ ^[Yy]$ ]] ) || \
+     ( [[ "$message" == *"[Y/n]"* ]] && ! [[ "${confirm}" =~ ^[Yy]*$ ]] ); then
+    echo
+    echo "  Removing ${name}..."
+    rm -rf "$name"
+    sed -i "s/ $name / /" scripts/taito/project.sh
+
+    if [[ $name == "bi" ]]; then
+      sed -i "s/ bidb / /" scripts/taito/project.sh
+
+      rm -rf database/local-bi-db.sh
+
+      sed -i "/^  data_pipeline_template-bi:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data_pipeline_template-biinit:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data_pipeline_template-biworker:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data_pipeline_template-bibeat:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data_pipeline_template-redis:\r*\$/,/^\r*$/d" docker-compose.yaml
+
+      sed -i "/^        # BI API: Superset api\r*\$/,/^        }\r*$/d" docker-nginx.conf
+      sed -i "/^        # BI: Superset\r*\$/,/^        }\r*$/d" docker-nginx.conf
+
+      sed -i "/^# Additional databases\r*\$/,/^\r*$/d" scripts/taito/project.sh
+
+      sed -i '/superset/d' scripts/taito/project.sh
+      sed -i '/Superset/d' docker-compose.yaml
+
+      sed -i '/BIDB_/d' docker-compose.yaml
+      sed -i '/bidb_/d' docker-compose.yaml
+      sed -i '/bidb_/d' scripts/taito/env-local.sh
+      sed -i '/bidb_/d' scripts/taito/project.sh
+    fi
+  fi
+}
+
+prune "Include Apache Superset (bi)? [y/N] " bi
 
 # Replace some strings
 echo "Replacing project and company names in files. Please wait..."
