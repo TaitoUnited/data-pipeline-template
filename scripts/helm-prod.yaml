@@ -2,7 +2,4 @@
 
 full-stack:
   serviceDefaults:
-    cpuRequest: 100m
-    cpuLimit: 500m
-    memoryRequest: 128Mi
-    memoryLimit: 512Mi
+    memoryLimit: 1024Mi

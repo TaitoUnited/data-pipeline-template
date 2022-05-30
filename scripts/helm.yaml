@@ -35,7 +35,7 @@ full-stack:
     # Resources
     cpuRequest: 100m
     cpuLimit: 500m
-    memoryRequest: 128Mi
+    memoryRequest: 256Mi
     memoryLimit: 512Mi
     # Horizontal scaling
     replicas: ${kubernetes_replicas}
