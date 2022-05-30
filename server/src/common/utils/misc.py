@@ -34,5 +34,5 @@ def filter_item_properties(items, propertyNames):
     return filtered
 
 
-def propertyExists(item, properyName):
-    return properyName in item and item[properyName]
+def propertyExists(item, propertyName):
+    return propertyName in item and item[propertyName]

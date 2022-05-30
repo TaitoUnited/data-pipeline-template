@@ -96,6 +96,7 @@ class AzureStorageBucket(StorageBucket):
         )
         # TODO: implement without continuous poll loop
         while True:
+            print("Waiting messages from azure storage: " + self.bucket_name)
             messages = queue_client.receive_messages(visibility_timeout=120)
             for message in messages:
                 url = None
@@ -104,6 +105,7 @@ class AzureStorageBucket(StorageBucket):
                     url = content["data"]["url"]
                     url_split = content["data"]["url"].split("/")
                     file_path = "/".join(url_split[4:])
+                    print("Received: " + url)
                     if (
                         not file_path_prefix
                         or file_path.startswith(file_path_prefix)
@@ -111,10 +113,13 @@ class AzureStorageBucket(StorageBucket):
                         not file_path_suffix
                         or file_path.endswith(file_path_suffix)
                     ):
+                        print("Processing: " + file_path)
                         func(file_path)
                         queue_client.delete_message(
                             message.id, message.pop_receipt
                         )
+                    else:
+                        print("Skipping: " + file_path)
                 except Exception as e:
                     print(
                         "ERROR: Failed to handle storage message for " + url,
@@ -122,6 +127,16 @@ class AzureStorageBucket(StorageBucket):
                     )
                     print(e, file=sys.stderr)
             time.sleep(random.randint(20, 80))
+
+    def upload_csv_file(self, file_path, data_df):
+        blob_client = self.container_client.get_blob_client(file_path)
+        # data_df = data_df.replace(u"\u2018", "'").replace(u"\u0100", "a", regex=True).replace(u"\u0113", "e", regex=True).replace(u"\u012A", "i", regex=True).replace(u"\u012B", "i", regex=True).replace(u"\u0101", "a", regex=True).replace(u"\u201d", "'", regex=True)
+        df_stream = data_df.to_csv(sep=";", decimal=",", index=False).encode(
+            "iso-8859-1", errors="replace"
+        )
+        return blob_client.upload_blob(
+            df_stream, length=len(df_stream), overwrite=True
+        )
 
 
 class S3StorageBucket(StorageBucket):
@@ -162,6 +177,30 @@ class S3StorageBucket(StorageBucket):
         self, file_path_prefix, file_path_suffix, func, queue_name=None
     ):
         raise Exception("listen_changes not implemented")
+
+    def download_fileobj(self, file_path, fileobj):
+        return self.client.download_fileobj(
+            Bucket=self.bucket_name,
+            Key=file_path,
+            Fileobj=fileobj,
+            ExtraArgs=None,
+            Callback=None,
+            Config=None,
+        )
+
+    def upload_csv_file(self, file_path, data_df):
+        # data_df = data_df.replace(u"\u2018", "'").replace(u"\u0100", "a", regex=True).replace(u"\u0113", "e", regex=True).replace(u"\u012A", "i", regex=True).replace(u"\u012B", "i", regex=True).replace(u"\u0101", "a", regex=True).replace(u"\u201d", "'", regex=True)
+        df_stream = data_df.to_csv(sep=";", decimal=",", index=False).encode(
+            "iso-8859-1", errors="replace"
+        )
+
+        return self.client.put_object(
+            Bucket=self.bucket_name,
+            Key=file_path,
+            Body=df_stream,
+            ContentLength=len(df_stream),
+            ContentType="application/csv",
+        )
 
 
 class MinioStorageBucket(S3StorageBucket):
