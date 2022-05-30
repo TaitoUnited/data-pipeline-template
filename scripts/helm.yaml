@@ -49,6 +49,7 @@ full-stack:
       paths:
         - path: /api
           clientMaxBodySize: 1m
+          readTimeout: 60
       egress:
         # Allow outbound connections to database and to any public ip address
         - ip: "${db_database_real_host}/32"
