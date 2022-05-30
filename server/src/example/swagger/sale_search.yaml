@@ -1,0 +1,58 @@
+summary: "Search for sales data"
+description: "Return matching sales data"
+produces:
+  - "application/json"
+schemes:
+  - "https"
+parameters:
+  - name: offset
+    in: query
+    schema:
+      type: integer
+    description: The number of items to skip before starting to collect the result set
+  - name: limit
+    in: query
+    schema:
+      type: integer
+    description: The numbers of items to return
+  - name: start_date
+    in: query
+    type: string
+    required: false
+  - name: end_date
+    in: query
+    type: string
+    required: false
+responses:
+  500:
+    description: Internal Server Error
+  403:
+    description: Invalid API KEY or API KEY not given
+  400:
+    description: Invalid value
+  200:
+    description: OK | total number of rows and data
+    schema:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 100
+        data:
+          properties:
+            order_number:
+              type: string
+              nullable: false
+            quantity:
+              type: integer
+              nullable: false
+            price:
+              type: numeric
+              nullable: false
+securitySchemes:
+  apiKey:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+security:
+  - apiKey: []

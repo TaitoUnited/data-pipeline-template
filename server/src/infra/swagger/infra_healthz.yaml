@@ -1,0 +1,17 @@
+summary: "Check container health"
+description: "Checks container health"
+produces:
+  - "application/json"
+schemes:
+  - "https"
+responses:
+  500:
+    description: Container not healthy
+  200:
+    description: Status OK
+    schema:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK

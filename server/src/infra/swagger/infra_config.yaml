@@ -1,0 +1,16 @@
+summary: "Get API client configurations"
+description: "Return public configuration settings required by API clients."
+produces:
+  - "application/json"
+schemes:
+  - "https"
+responses:
+  500:
+    description: Internal Server Error
+  200:
+    description: Status OK
+    schema:
+      type: object
+      properties:
+        APP_VERSION:
+          type: string

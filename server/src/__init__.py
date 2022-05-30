@@ -2,6 +2,7 @@ import os
 import typing
 from flask import Flask
 from flask_cors import CORS
+from flasgger import Swagger
 from src.common.setup.json import CustomJSONEncoder
 from . import api
 
@@ -35,6 +36,51 @@ def create_app(
 
     log.setup(app)
     sentry.connect(app)
+
+    # Swagger configurations
+    app.config["SWAGGER"] = {
+        "title": "data-pipeline-template",
+        "uiversion": 3,
+    }
+    swagger_template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "data-pipeline-template | REST API",
+            "description": "API for ...",
+        },
+        "basePath": "/",
+        "swaggerUiPrefix": "/api",
+        "schemes": ["https"],
+        "securityDefinitions": {
+            "BasicAuth": {
+                "type": "basic",
+                "name": "basic authentication",
+                "in": "header",
+            },
+            "apiKey": {
+                "type": "apiKey",
+                "name": "X-API-KEY",
+                "in": "header",
+            },
+        },
+        "security": {"BasicAuth": [], "apiKey": []},
+    }
+    swagger_config = {
+        "headers": [],
+        "specs": [
+            {
+                "endpoint": "apispec_1",
+                "route": "/apispec_1.json",
+                "rule_filter": lambda rule: True,  # all in
+                "model_filter": lambda tag: True,  # all in
+            }
+        ],
+        "static_url_path": "/flasgger_static",
+        "swagger_ui": True,
+        "specs_route": "/swagger/",
+    }
+
+    swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
     @app.errorhandler(Exception)
     def handle_bad_request(e: Exception) -> typing.Any:

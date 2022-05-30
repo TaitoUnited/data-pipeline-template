@@ -1,4 +1,5 @@
 from flask import Blueprint, request, current_app
+from flasgger.utils import swag_from
 from src.common.utils.validate import validate_api_key
 from ..services.sale_etl_service import SaleEtlService
 
@@ -12,6 +13,7 @@ bp = Blueprint("etl", __name__, url_prefix="/example/etl")
 
 
 @bp.route("/sales_extract", methods=("GET", "POST"))
+@swag_from("../swagger/etl_sales_extract.yaml")
 def sales_extract():
     """Run sales ETL process. API KEY can be given as X-API-KEY request header
     (recommended) or as api_key query parameter (for development).

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, current_app
+from flasgger.utils import swag_from
 from src.common.utils.misc import filter_item_properties
 from src.common.utils.validate import validate_api_key
 from ..services.sale_service import SaleService
@@ -9,6 +10,7 @@ bp = Blueprint("sales", __name__, url_prefix="/example/sales")
 
 
 @bp.route("")
+@swag_from("../swagger/sale_search.yaml")
 def search():
     """Search for sales. API KEY can be given as X-API-KEY request header
     (recommended) or as api_key query parameter (for development).
@@ -34,7 +36,5 @@ def search():
     properties = request.args.get("properties")
     if properties:
         data = filter_item_properties(data, properties.split(","))
-
-    # print(json.dumps({'joo': Decimal('1.1')}, cls=DecimalEncoder))
 
     return {"total": result["total"], "data": data}

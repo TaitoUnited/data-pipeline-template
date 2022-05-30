@@ -1,0 +1,25 @@
+summary: "Trigger the sales ETL process."
+description: "Triggers the sales ETL process."
+produces:
+  - "application/json"
+schemes:
+  - "https"
+responses:
+  500:
+    description: Internal Server Error
+  403:
+    description: Invalid API KEY or API KEY not given
+  200:
+    description: Status OK
+    schema:
+      type: object
+      properties:
+        APP_VERSION:
+          type: string
+securitySchemes:
+  apiKey:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+security:
+  - apiKey: []

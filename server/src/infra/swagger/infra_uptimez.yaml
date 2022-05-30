@@ -1,0 +1,17 @@
+summary: "Check API health"
+description: "Checks API health, including dependencies like database"
+produces:
+  - "application/json"
+schemes:
+  - "https"
+responses:
+  500:
+    description: API not healthy
+  200:
+    description: Status OK
+    schema:
+      type: object
+      properties:
+        status:
+          type: string
+          example: OK
