@@ -1,3 +1,4 @@
 -- Initialization script for your default database. Create extensions here.
 
--- EXAMPLE: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "postgis";

@@ -202,7 +202,7 @@ services:
 
   data-pipeline-template-database:
     container_name: data-pipeline-template-database
-    image: postgres:12
+    image: postgis/postgis:14-3.2
     restart: unless-stopped
     networks:
       - default
