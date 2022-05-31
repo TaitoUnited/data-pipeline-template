@@ -130,7 +130,6 @@ class AzureStorageBucket(StorageBucket):
 
     def upload_csv_file(self, file_path, data_df):
         blob_client = self.container_client.get_blob_client(file_path)
-        # data_df = data_df.replace(u"\u2018", "'").replace(u"\u0100", "a", regex=True).replace(u"\u0113", "e", regex=True).replace(u"\u012A", "i", regex=True).replace(u"\u012B", "i", regex=True).replace(u"\u0101", "a", regex=True).replace(u"\u201d", "'", regex=True)
         df_stream = data_df.to_csv(sep=";", decimal=",", index=False).encode(
             "iso-8859-1", errors="replace"
         )
@@ -189,7 +188,6 @@ class S3StorageBucket(StorageBucket):
         )
 
     def upload_csv_file(self, file_path, data_df):
-        # data_df = data_df.replace(u"\u2018", "'").replace(u"\u0100", "a", regex=True).replace(u"\u0113", "e", regex=True).replace(u"\u012A", "i", regex=True).replace(u"\u012B", "i", regex=True).replace(u"\u0101", "a", regex=True).replace(u"\u201d", "'", regex=True)
         df_stream = data_df.to_csv(sep=";", decimal=",", index=False).encode(
             "iso-8859-1", errors="replace"
         )

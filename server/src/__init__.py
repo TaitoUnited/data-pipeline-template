@@ -103,7 +103,7 @@ def create_app(
         "specs_route": "/swagger/",
     }
 
-    swagger = Swagger(app, config=swagger_config, template=swagger_template)
+    Swagger(app, config=swagger_config, template=swagger_template)
 
     @app.errorhandler(Exception)
     def handle_bad_request(e: Exception) -> typing.Any:
