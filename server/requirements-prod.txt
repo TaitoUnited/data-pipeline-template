@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements-prod.in
 #
+attrs==21.2.0
+    # via jsonschema
 azure-core==1.17.0
     # via
     #   azure-eventgrid
@@ -39,15 +41,22 @@ charset-normalizer==2.0.4
     # via requests
 click==7.1.2
     # via flask
+colour==0.1.5
+    # via styleframe
 cryptography==3.4.7
     # via
     #   azure-storage-blob
     #   azure-storage-queue
     #   msal
     #   pyjwt
+et-xmlfile==1.1.0
+    # via openpyxl
+flasgger==0.9.5
+    # via -r requirements.in
 flask==1.1.2
     # via
     #   -r requirements.in
+    #   flasgger
     #   flask-cors
     #   sentry-sdk
 flask-cors==3.0.10
@@ -85,10 +94,16 @@ jmespath==0.10.0
     # via
     #   boto3
     #   botocore
+jsonschema==3.2.0
+    # via
+    #   flasgger
+    #   styleframe
 markupsafe==1.1.1
     # via jinja2
 minio==7.1.0
     # via -r requirements.in
+mistune==0.8.4
+    # via flasgger
 msal==1.13.0
     # via -r requirements.in
 msrest==0.6.21
@@ -100,8 +115,14 @@ numpy==1.21.2
     # via pandas
 oauthlib==3.1.1
     # via requests-oauthlib
+openpyxl==3.0.7
+    # via
+    #   -r requirements.in
+    #   styleframe
 pandas==1.3.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   styleframe
 protobuf==3.17.3
     # via
     #   google-api-core
@@ -120,6 +141,8 @@ pydantic==1.7.3
     # via -r requirements.in
 pyjwt[crypto]==2.1.0
     # via msal
+pyrsistent==0.18.0
+    # via jsonschema
 python-dateutil==2.8.1
     # via
     #   botocore
@@ -128,6 +151,8 @@ python-json-logger==2.0.1
     # via -r requirements.in
 pytz==2021.1
     # via pandas
+pyyaml==6.0
+    # via flasgger
 requests==2.26.0
     # via
     #   -r requirements.in
@@ -148,11 +173,15 @@ sentry-sdk[flask]==0.19.5
 six==1.15.0
     # via
     #   azure-core
+    #   flasgger
     #   flask-cors
     #   isodate
+    #   jsonschema
     #   protobuf
     #   python-dateutil
 sqlalchemy==1.4.23
+    # via -r requirements.in
+styleframe==4.0.0
     # via -r requirements.in
 urllib3==1.26.2
     # via
@@ -166,6 +195,8 @@ uwsgidecorators==1.1.0
     # via -r requirements-prod.in
 werkzeug==1.0.1
     # via flask
+xlrd==1.2.0
+    # via styleframe
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

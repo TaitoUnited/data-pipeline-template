@@ -16,3 +16,8 @@ sqlalchemy
 flask
 flask-cors
 sentry-sdk[flask]
+flasgger
+
+# Added
+openpyxl
+styleframe
