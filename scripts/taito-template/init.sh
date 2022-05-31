@@ -35,11 +35,11 @@ function prune () {
 
       rm -rf database/local-bi-db.sh
 
-      sed -i "/^  data_pipeline_template-bi:\r*\$/,/^\r*$/d" docker-compose.yaml
-      sed -i "/^  data_pipeline_template-biinit:\r*\$/,/^\r*$/d" docker-compose.yaml
-      sed -i "/^  data_pipeline_template-biworker:\r*\$/,/^\r*$/d" docker-compose.yaml
-      sed -i "/^  data_pipeline_template-bibeat:\r*\$/,/^\r*$/d" docker-compose.yaml
-      sed -i "/^  data_pipeline_template-redis:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data-pipeline-template-bi:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data-pipeline-template-biinit:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data-pipeline-template-biworker:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data-pipeline-template-bibeat:\r*\$/,/^\r*$/d" docker-compose.yaml
+      sed -i "/^  data-pipeline-template-redis:\r*\$/,/^\r*$/d" docker-compose.yaml
 
       sed -i "/^        # BI API: Superset api\r*\$/,/^        }\r*$/d" docker-nginx.conf
       sed -i "/^        # BI: Superset\r*\$/,/^        }\r*$/d" docker-nginx.conf
