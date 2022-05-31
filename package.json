@@ -1,7 +1,7 @@
 {
   "name": "data-pipeline-template",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "if [ \"$taito_mode\" != 'ci' ]; then husky install; fi",
     "install-clean": "echo '# Nothing to cleanup'",
     "install-ci": "echo '# Nothing to install'",
     "install-dev": "echo '# Nothing to install'",
