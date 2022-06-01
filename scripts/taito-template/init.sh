@@ -69,7 +69,7 @@ if ! grep django server/requirements.in &> /dev/null; then
   sed -i "s/ && npm run taito-host-db-deploy/ /" package.json
   sed -i '/taito-host-db-deploy/d' package.json
   sed -i '/taito-host-generate/d' package.json
-  sed -i '/run: docker-compose/d' .github/workflows/pipeline.yaml
+  sed -i '/run: . ./taito-config.sh/d' .github/workflows/pipeline.yaml
   sed -i "s/# - run: taito db deploy/- run: taito db deploy/" .github/workflows/pipeline.yaml
 else
   # Django uses integrated Jupyter Lab
