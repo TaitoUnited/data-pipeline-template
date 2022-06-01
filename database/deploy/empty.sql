@@ -1,4 +1,4 @@
--- Deploy acme-azureware3:empty to pg
+-- Deploy data-pipeline-template:empty to pg
 
 BEGIN;
 

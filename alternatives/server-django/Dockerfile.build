@@ -1,0 +1,81 @@
+# Builder and tester container for production build
+FROM python:3.9 as builder
+# FOR SPARK: FROM bitnami/spark:3
+
+RUN apt-get -y update && apt-get -y install \
+  build-essential \
+  libffi-dev \
+  python3-dev \
+  libssl-dev \
+  cargo \
+  gdal-bin
+
+ENV PYTHONPATH=/develop
+RUN mkdir -p /develop
+WORKDIR /develop
+
+ARG SERVICE_DIR=.
+COPY ${SERVICE_DIR}/requirements* /develop/
+RUN pip3 install --upgrade pip && pip3 install -r requirements-dev.txt
+COPY ${SERVICE_DIR} /develop
+
+RUN flake8
+RUN mypy --ignore-missing-imports src
+RUN pytest src # Run unit tests
+
+
+# Production runtime container
+FROM python:3.9
+ARG BUILD_VERSION
+LABEL version=${BUILD_VERSION} \
+  company=companyname \
+  project=data-pipeline-template \
+  role=server
+
+ENV PYTHON_ENV production
+
+RUN useradd supervisor && useradd python && useradd nginx
+
+# TODO: remove?
+# https://github.com/moby/moby/issues/31243
+RUN usermod -a -G tty supervisor && \
+  usermod -a -G tty python && \
+  usermod -a -G tty nginx
+
+RUN apt-get -y update && apt-get -y install \
+  nginx \
+  build-essential \
+  libffi-dev \
+  gdal-bin \
+  supervisor
+
+ENV PYTHONPATH=/service
+RUN mkdir -p /service
+WORKDIR /service
+COPY --from=builder /develop/src ./src
+COPY --from=builder /develop/requirements-prod.txt .
+
+# FOR SPARK:
+# COPY --from=builder /tmp/spark-libs.sh /tmp
+# RUN /tmp/spark-libs.sh
+
+RUN pip3 install --upgrade pip && \
+  pip3 install -r requirements-prod.txt
+RUN apt-get -y purge build-essential libffi-dev && \
+  apt-get -y autoremove
+
+COPY ${SERVICE_DIR}/execute \
+  ${SERVICE_DIR}/start.sh \
+  ${SERVICE_DIR}/supervi* \
+  ${SERVICE_DIR}/uwsgi.ini \
+  /service/
+COPY ${SERVICE_DIR}/nginx.conf /etc/nginx/nginx.conf
+
+# Make due for the nginx pid file and unix socket
+RUN mkdir -p /var/run/nginx
+RUN chown nginx:nginx /var/run/nginx && \
+  chown nginx:nginx /var/log/nginx
+
+# TODO: do not run all as root
+EXPOSE 8080
+CMD ./start.sh

@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "lint": "flake8",
+    "unit": "pytest src"
+  }
+}

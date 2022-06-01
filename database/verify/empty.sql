@@ -1,4 +1,4 @@
--- Verify acme-azureware3:empty on pg
+-- Verify data-pipeline-template:empty on pg
 
 BEGIN;
 

@@ -32,6 +32,7 @@ services:
       - "./server:/develop:delegated"
     tty: true
     secrets:
+      - DJANGO_SECRET_KEY
       - API_KEY
       - API_KEY_ETL
     environment:
@@ -245,6 +246,8 @@ secrets:
     file: ./secrets/${taito_env}/${db_database_app_secret}
   BIDB_DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_bidb_app_secret}
+  DJANGO_SECRET_KEY:
+    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-django.secretKey
   API_KEY:
     file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKey
   API_KEY_ETL:

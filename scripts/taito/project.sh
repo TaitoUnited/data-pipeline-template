@@ -59,6 +59,7 @@ db_bidb_default_secret="${db_bidb_mgr_secret}"
 taito_secrets="
   $db_database_app_secret:random
   $db_bidb_app_secret:random
+  $taito_project-$taito_env-django.secretKey:random-50
   $taito_project-$taito_env-api.apiKey:random-50
   $taito_project-$taito_env-api.apiKeyEtl:random-50
 "
@@ -91,6 +92,9 @@ taito_cicd_secrets="
   $db_bidb_ssl_ca_secret
   $db_bidb_ssl_cert_secret
   $db_bidb_ssl_key_secret
+  $taito_project-$taito_env-django.secretKey
+  $taito_project-$taito_env-api.apiKey
+  $taito_project-$taito_env-api.apiKeyEtl
 "
 
 # Secrets required by CI/CD tests
@@ -110,7 +114,7 @@ taito_secret_hints="
 # 'taito project generate'. Configuration instructions: TODO
 
 link_urls="
-  * server[:ENV]=$taito_app_url/api/uptimez Server API status (:ENV)
+  * server[:ENV]=$taito_app_url/api/uptimez/ Server API status (:ENV)
   * git=https://$taito_vc_repository_url Git repository
 "
 

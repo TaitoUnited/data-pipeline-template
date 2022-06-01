@@ -48,6 +48,7 @@ full-stack:
     server:
       paths:
         - path: /api
+          # rewriteTargetDisabled: true
           clientMaxBodySize: 1m
           readTimeout: 60
       egress:
@@ -65,6 +66,7 @@ full-stack:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        DJANGO_SECRET_KEY: ${taito_project}-${taito_env}-django.secretKey
         API_KEY: ${taito_project}-${taito_env}-api.apiKey
         API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
       env:
@@ -83,8 +85,8 @@ full-stack:
         DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
-        STORAGE_TYPE: azure
-        STORAGE_ENDPOINT:
+        STORAGE_TYPE: s3
+        STORAGE_ENDPOINT: http://${taito_project}-${taito_env}-storage:8080 # For Azure
         STORAGE_BUCKET: ${st_bucket_name}
 
     worker:
@@ -107,6 +109,7 @@ full-stack:
         DATABASE_PASSWORD: ${db_database_app_secret}
         STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
         STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        DJANGO_SECRET_KEY: ${taito_project}-${taito_env}-django.secretKey
         API_KEY: ${taito_project}-${taito_env}-api.apiKey
         API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
       env:
@@ -121,6 +124,19 @@ full-stack:
         DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
-        STORAGE_TYPE: azure
-        STORAGE_ENDPOINT:
+        STORAGE_TYPE: s3
+        STORAGE_ENDPOINT: http://${taito_project}-${taito_env}-storage:8080 # For Azure
         STORAGE_BUCKET: ${st_bucket_name}
+
+    # For Azure
+    storage:
+      image: andrewgaul/s3proxy
+      replicas: 1
+      port: 80
+      livenessDisabled: true # TODO
+      memoryRequest: 10Mi
+      secretEnv:
+        JCLOUDS_IDENTITY: ${taito_project}-${taito_env}-storage.accessKeyId
+        JCLOUDS_CREDENTIAL: ${taito_project}-${taito_env}-storage.secretKey
+      env:
+        JCLOUDS_PROVIDER: azureblob

@@ -1,4 +1,4 @@
--- Revert acme-azureware3:empty from pg
+-- Revert data-pipeline-template:empty from pg
 
 BEGIN;
 

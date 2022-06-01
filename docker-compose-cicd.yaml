@@ -26,15 +26,14 @@ services:
     volumes:
       - "${DOCKER_HOST_PATH}/server:/develop:delegated"
       - "/develop/node_modules"
-      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_mgr_secret}:/run/secrets/DATABASE_PASSWORD" # For GitHub Actions
-      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_ca_secret}:/run/secrets/DATABASE_SSL_CA" # For GitHub Actions
-      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_cert_secret}:/run/secrets/DATABASE_SSL_CERT" # For GitHub Actions
-      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_key_secret}:/run/secrets/DATABASE_SSL_KEY" # For GitHub Actions
     secrets:
       - DATABASE_PASSWORD
       - DATABASE_SSL_CA
       - DATABASE_SSL_CERT
       - DATABASE_SSL_KEY
+      - DJANGO_SECRET_KEY
+      - API_KEY
+      - API_KEY_ETL
     tty: true
     environment:
       taito_running_tests: "true"
@@ -57,7 +56,6 @@ services:
       - "5432"
     volumes:
       - "${DOCKER_HOST_PATH}/:/project:delegated"
-      - "${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/cicd-proxy-serviceaccount.key:/run/secrets/CICD_PROXY_SERVICEACCOUNT_KEY" # For GitHub Actions # For GCP
     secrets: # For GCP
       - CICD_PROXY_SERVICEACCOUNT_KEY # For GCP
     environment:
@@ -141,6 +139,12 @@ secrets:
     file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_cert_secret}
   DATABASE_SSL_KEY:
     file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${db_database_ssl_key_secret}
+  DJANGO_SECRET_KEY:
+    file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${taito_project}-${taito_env}-django.secretKey
+  API_KEY:
+    file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKey
+  API_KEY_ETL:
+    file: ${DOCKER_HOST_PATH}/tmp/secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKeyEtl
 
 networks:
   cicd:

@@ -59,6 +59,25 @@ function prune () {
 
 prune "Include Apache Superset (bi)? [y/N] " bi
 
+# Prune Django
+if ! grep django server/requirements.in &> /dev/null; then
+  sed -i '/django/d' docker-compose.yaml
+  sed -i '/DJANGO/d' docker-compose.yaml
+  sed -i '/django/d' docker-compose-cicd.yaml
+  sed -i '/DJANGO/d' docker-compose-cicd.yaml
+  sed -i '/django/d' scripts/taito/project.sh
+  sed -i "s/ && npm run taito-host-db-deploy/ /" package.json
+  sed -i '/taito-host-db-deploy/d' package.json
+  sed -i '/taito-host-generate/d' package.json
+  sed -i '/run: docker-compose/d' .github/workflows/pipeline.yaml
+  sed -i "s/# - run: taito db deploy/- run: taito db deploy/" .github/workflows/pipeline.yaml
+else
+  # Django uses integrated Jupyter Lab
+  # TODO: Integrate Jupyter Lab also with Flask
+  sed -i "s/data-pipeline-template-lab/data-pipeline-template-server/" docker-nginx.conf
+  sed -i "/^  data-pipeline-template-lab:\r*\$/,/^\r*$/d" docker-compose.yaml
+fi
+
 # Replace some strings
 echo "Replacing project and company names in files. Please wait..."
 find . -type f -exec sed -i \

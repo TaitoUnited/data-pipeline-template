@@ -24,7 +24,7 @@ jobs:
         taito_image: ${_TEMPLATE_DEFAULT_TAITO_IMAGE}
         taito_ci_phases:
         IMAGE_TAG: ${{ github.sha }}
-        DOCKER_HOST_PATH: /home/runner/work/data-pipeline-template/data-pipeline-template
+        DOCKER_HOST_PATH: ${{ github.workspace }}
         AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
         AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
     steps:
@@ -97,7 +97,9 @@ jobs:
       - run: taito artifact prepare:server:$BRANCH $IMAGE_TAG
 
       # Deploy changes to target environment
-      - run: taito db deploy:$BRANCH
+      # TODO: Put "taito db deploy" back once this has been resolved: https://github.com/npm/rfcs/issues/546
+      # - run: taito db deploy:$BRANCH
+      - run: docker-compose -f docker-compose-cicd.yaml run --rm ${taito_project}-server-cicd sh -c 'echo Sleeping... && sleep 30 && echo Done sleeping && python src/manage.py migrate'
       - run: taito deployment deploy:$BRANCH $IMAGE_TAG
 
       # Test and verify deployment

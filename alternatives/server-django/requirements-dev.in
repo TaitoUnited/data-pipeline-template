@@ -1,0 +1,10 @@
+-r requirements.in
+
+flake8
+mypy
+pytest-django
+requests
+
+# For Django Jupyter support
+jupyterlab  # Or just "jupyter"
+ipython

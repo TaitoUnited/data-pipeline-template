@@ -15,7 +15,8 @@ RUN apt-get -y update && apt-get -y install \
   python3-dev \
   libssl-dev \
   cargo \
-  supervisor
+  supervisor \
+  npm
 
 RUN mkdir -p /develop
 WORKDIR /develop
@@ -32,6 +33,6 @@ RUN pip3 install -r requirements-dev.txt
 
 EXPOSE 8080
 CMD pip-compile requirements-dev.in; \
-    pip-compile requirements-prod.in; \
-    pip3 install -r requirements-dev.txt; \
-    ./start.sh
+  pip-compile requirements-prod.in; \
+  pip3 install -r requirements-dev.txt; \
+  ./start.sh

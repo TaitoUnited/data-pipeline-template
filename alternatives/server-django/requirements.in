@@ -1,0 +1,29 @@
+# Django API
+django
+djangorestframework
+django-cors-headers
+django-extensions
+werkzeug
+JSON-log-formatter
+
+# ETL
+msal
+pandas
+psycopg2-binary
+pydantic
+requests
+sqlalchemy
+
+# Excel
+openpyxl
+styleframe
+
+# Storage
+boto3
+
+# Storage: additional libs required for listening buckets
+minio
+azure-eventgrid
+azure-storage-blob
+azure-storage-queue
+google-cloud-storage
