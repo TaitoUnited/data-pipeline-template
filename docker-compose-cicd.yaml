@@ -38,7 +38,7 @@ services:
     environment:
       taito_running_tests: "true"
       # For Django database migrations
-      DATABASE_HOST: acme-azur1-database-proxy
+      DATABASE_HOST: data-pipeline-template-database-proxy
       DATABASE_PORT: ${db_database_port}
       DATABASE_NAME: ${db_database_name}
       DATABASE_USER: ${db_database_mgr_username}
