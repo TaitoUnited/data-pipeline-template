@@ -128,15 +128,14 @@ full-stack:
         STORAGE_ENDPOINT: http://${taito_project}-${taito_env}-storage:8080 # For Azure
         STORAGE_BUCKET: ${st_bucket_name}
 
-    # For Azure
-    storage:
-      image: andrewgaul/s3proxy
-      replicas: 1
-      port: 80
-      livenessDisabled: true # TODO
-      memoryRequest: 10Mi
-      secretEnv:
-        JCLOUDS_IDENTITY: ${taito_project}-${taito_env}-storage.accessKeyId
-        JCLOUDS_CREDENTIAL: ${taito_project}-${taito_env}-storage.secretKey
-      env:
-        JCLOUDS_PROVIDER: azureblob
+    storage: # For Azure
+      image: andrewgaul/s3proxy # For Azure
+      replicas: 1 # For Azure
+      port: 80 # For Azure
+      livenessDisabled: true # TODO # For Azure
+      memoryRequest: 10Mi # For Azure
+      secretEnv: # For Azure
+        JCLOUDS_IDENTITY: ${taito_project}-${taito_env}-storage.accessKeyId # For Azure
+        JCLOUDS_CREDENTIAL: ${taito_project}-${taito_env}-storage.secretKey # For Azure
+      env: # For Azure
+        JCLOUDS_PROVIDER: azureblob # For Azure
