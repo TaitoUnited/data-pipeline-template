@@ -76,6 +76,11 @@ else
   # TODO: Integrate Jupyter Lab also with Flask
   sed -i "s/data-pipeline-template-lab/data-pipeline-template-server/" docker-nginx.conf
   sed -i "/^  data-pipeline-template-lab:\r*\$/,/^\r*$/d" docker-compose.yaml
+  mkdir -p server/jupyter
+  mv lab/common server/jupyter
+  mv lab/lessons server/jupyter
+  mv lab/work server/jupyter
+  rm -rf lab
 fi
 
 # Replace some strings

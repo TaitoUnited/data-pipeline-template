@@ -41,6 +41,7 @@ services:
       BASE_PATH: /api
       API_PORT: 8080
       API_BINDADDR: 0.0.0.0
+      COMMON_DOMAIN: localhost
       COMMON_PUBLIC_PORT: 9999
       CORS_ORIGINS: https://example1.com,https://example2.com
       # Common variables
