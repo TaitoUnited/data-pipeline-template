@@ -49,6 +49,14 @@ Open Apache Superset in browser:
 
     taito open bi
 
+Open Django Admin in browser:
+
+    taito open admin
+
+Run Django manage command:
+
+    taito manage COMMAND
+
 Show user accounts and other information that you can use to log in:
 
     taito info
