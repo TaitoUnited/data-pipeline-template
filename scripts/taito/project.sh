@@ -122,6 +122,7 @@ if [[ ${taito_env} == "local" ]]; then
   link_urls="
     ${link_urls}
     * bi[:ENV]=$taito_app_url/superset/welcome/ Superset BI (:ENV)
+    * admin[:ENV]=$taito_app_url/admin/ Django Admin (:ENV)
     * lab[:ENV]=$taito_app_url/lab Jupyter Lab (:ENV)
     * lessons[:ENV]=$taito_app_url/lab/tree/lessons/Contents.ipynb Lessons on Jupyter Lab (:ENV)
   "
