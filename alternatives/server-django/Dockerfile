@@ -5,7 +5,7 @@ FROM python:3.9
 ENV NODE_ENV development
 ENV PYTHON_ENV development
 ENV DJANGO_ENV development
-ENV DJANGO_APP src
+ENV DJANGO_APP django
 
 RUN useradd supervisor && useradd python
 
@@ -16,10 +16,11 @@ RUN apt-get -y update && apt-get -y install \
   libssl-dev \
   cargo \
   gdal-bin \
+  libgdal-dev \
   supervisor \
   npm
 
-ENV PYTHONPATH=/develop
+ENV PYTHONPATH=/develop/django
 RUN mkdir -p /develop
 WORKDIR /develop
 

@@ -7,6 +7,7 @@ case $suite_name in
   pytest)
     case $test_name in
       *)
+        cd django
         pytest test -k "${test_name}"
       ;;
     esac

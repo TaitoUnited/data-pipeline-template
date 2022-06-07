@@ -4,8 +4,8 @@ import pandas as pd
 import requests
 import sys
 import time
-from src.common.utils.misc import get_secret_value
-from src.common.utils.validate import validate_is_one_word
+from common.utils.misc import get_secret_value
+from common.utils.validate import validate_is_one_word
 
 
 # -------------------------------------------------------

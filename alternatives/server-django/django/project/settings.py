@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -25,6 +27,7 @@ def exclude_paths(record):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,7 +46,7 @@ ALLOWED_HOSTS: List[str] = [Config.COMMON_DOMAIN]
 
 INSTALLED_APPS = [
     "corsheaders",
-    "src.example.apps.ExampleConfig",
+    "example.apps.ExampleConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -64,7 +67,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "src.app.urls"
+ROOT_URLCONF = "project.urls"
 
 # Jupyter Lab
 try:
@@ -133,7 +136,7 @@ LOGGING = {
     },
 }
 
-WSGI_APPLICATION = "src.app.wsgi.application"
+WSGI_APPLICATION = "project.wsgi.application"
 
 
 # Database

@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.db import connection
-from src.app.config import Config
+from project.config import Config
 
 
 def get_config(request):

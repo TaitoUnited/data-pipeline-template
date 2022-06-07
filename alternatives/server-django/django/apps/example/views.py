@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
 
-from src.app.config import Config
-from src.common.utils.validate import validate_api_key
+from project.config import Config
+from common.utils.validate import validate_api_key
 
 from .models import Sales
 from .serializers import SaleSerializer, SaleCreateSerializer

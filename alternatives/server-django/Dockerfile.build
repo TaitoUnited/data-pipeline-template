@@ -8,9 +8,10 @@ RUN apt-get -y update && apt-get -y install \
   python3-dev \
   libssl-dev \
   cargo \
-  gdal-bin
+  gdal-bin \
+  libgdal-dev
 
-ENV PYTHONPATH=/develop
+ENV PYTHONPATH=/develop/django
 RUN mkdir -p /develop
 WORKDIR /develop
 
@@ -20,8 +21,9 @@ RUN pip3 install --upgrade pip && pip3 install -r requirements-dev.txt
 COPY ${SERVICE_DIR} /develop
 
 RUN flake8
-RUN mypy --ignore-missing-imports src
-RUN pytest src # Run unit tests
+RUN mypy --ignore-missing-imports django
+# "pytest --ignore=/develop/django/test" not working for some reason
+RUN pytest django/common django/apps django/project
 
 
 # Production runtime container
@@ -49,10 +51,10 @@ RUN apt-get -y update && apt-get -y install \
   gdal-bin \
   supervisor
 
-ENV PYTHONPATH=/service
+ENV PYTHONPATH=/service/django
 RUN mkdir -p /service
 WORKDIR /service
-COPY --from=builder /develop/src ./src
+COPY --from=builder /develop/django ./django
 COPY --from=builder /develop/requirements-prod.txt .
 
 # FOR SPARK:

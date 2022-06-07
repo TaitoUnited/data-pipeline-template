@@ -1,6 +1,6 @@
 {
   "scripts": {
     "lint": "flake8",
-    "unit": "pytest src"
+    "unit": "pytest django/common django/apps django/project"
   }
 }
