@@ -91,7 +91,6 @@ jobs:
       - run: taito build prepare:$BRANCH $IMAGE_TAG
 
       # Prepare artifacts for deployment
-      # TODO: Should be run parallel
       # - run: taito artifact prepare:bi:$BRANCH $IMAGE_TAG
       # - run: taito artifact prepare:lab:$BRANCH $IMAGE_TAG
       - run: taito artifact prepare:server:$BRANCH $IMAGE_TAG
@@ -109,7 +108,6 @@ jobs:
       - run: taito deployment verify:$BRANCH
 
       # Release artifacts
-      # TODO: Should be run parallel
       # - run: taito artifact release:bi:$BRANCH $IMAGE_TAG
       # - run: taito artifact release:lab:$BRANCH $IMAGE_TAG
       - run: taito artifact release:server:$BRANCH $IMAGE_TAG

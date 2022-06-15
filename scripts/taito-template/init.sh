@@ -53,6 +53,8 @@ function prune () {
       sed -i '/bidb_/d' docker-compose.yaml
       sed -i '/bidb_/d' scripts/taito/env-local.sh
       sed -i '/bidb_/d' scripts/taito/project.sh
+
+      sed -i '/:bi:/d' .github/workflows/pipeline.yaml
     fi
   fi
 }
@@ -75,6 +77,7 @@ if ! grep django server/requirements.in &> /dev/null; then
 else
   # Django uses integrated Jupyter Lab
   # TODO: Integrate Jupyter Lab also with Flask
+  sed -i '/:lab:/d' .github/workflows/pipeline.yaml
   sed -i "s/data-pipeline-template-lab/data-pipeline-template-server/" docker-nginx.conf
   sed -i "/^  data-pipeline-template-lab:\r*\$/,/^\r*$/d" docker-compose.yaml
   mkdir -p server/jupyter
