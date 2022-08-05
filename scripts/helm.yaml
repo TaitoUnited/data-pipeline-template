@@ -86,7 +86,7 @@ full-stack:
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
         STORAGE_TYPE: s3
-        STORAGE_ENDPOINT: http://${taito_project}-${taito_env}-storage:8080 # For Azure
+        STORAGE_ENDPOINT: ${taito_project}-${taito_env}-storage:8080 # For Azure
         STORAGE_BUCKET: ${st_bucket_name}
 
     worker:
@@ -125,7 +125,7 @@ full-stack:
         DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
         DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
         STORAGE_TYPE: s3
-        STORAGE_ENDPOINT: http://${taito_project}-${taito_env}-storage:8080 # For Azure
+        STORAGE_ENDPOINT: ${taito_project}-${taito_env}-storage:8080 # For Azure
         STORAGE_BUCKET: ${st_bucket_name}
 
     storage: # For Azure
