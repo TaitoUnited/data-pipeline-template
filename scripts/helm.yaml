@@ -64,8 +64,10 @@ full-stack:
         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
       secretEnv:
         DATABASE_PASSWORD: ${db_database_app_secret}
-        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
-        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId # TODO: Remove on Azure
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey # TODO: Remove on Azure
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-s3proxy.accessKeyId # For Azure
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-s3proxy.secretKey # For Azure
         DJANGO_SECRET_KEY: ${taito_project}-${taito_env}-django.secretKey
         API_KEY: ${taito_project}-${taito_env}-api.apiKey
         API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
@@ -107,8 +109,10 @@ full-stack:
         proxySecret: ${taito_provider_db_proxy_secret} # For old gcp environments
       secretEnv:
         DATABASE_PASSWORD: ${db_database_app_secret}
-        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId
-        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-storage.accessKeyId # TODO: Remove on Azure
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-storage.secretKey # TODO: Remove on Azure
+        STORAGE_ACCESS_KEY: ${taito_project}-${taito_env}-s3proxy.accessKeyId # For Azure
+        STORAGE_SECRET_KEY: ${taito_project}-${taito_env}-s3proxy.secretKey # For Azure
         DJANGO_SECRET_KEY: ${taito_project}-${taito_env}-django.secretKey
         API_KEY: ${taito_project}-${taito_env}-api.apiKey
         API_KEY_ETL: ${taito_project}-${taito_env}-api.apiKeyEtl
@@ -135,6 +139,8 @@ full-stack:
       livenessDisabled: true # TODO # For Azure
       memoryRequest: 10Mi # For Azure
       secretEnv: # For Azure
+        S3PROXY_IDENTITY: ${taito_project}-${taito_env}-s3proxy.accessKeyId # For Azure
+        S3PROXY_CREDENTIAL: ${taito_project}-${taito_env}-s3proxy.secretKey # For Azure
         JCLOUDS_IDENTITY: ${taito_project}-${taito_env}-storage.accessKeyId # For Azure
         JCLOUDS_CREDENTIAL: ${taito_project}-${taito_env}-storage.secretKey # For Azure
       env: # For Azure
