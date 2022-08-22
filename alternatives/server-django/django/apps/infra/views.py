@@ -1,6 +1,8 @@
+import os
 from django.http import JsonResponse
 from django.db import connection
 from project.config import Config
+from common.etl import storage
 
 
 def get_config(request):
@@ -11,8 +13,15 @@ def get_config(request):
 
 
 def get_uptimez(request):
+    # Check database
     with connection.cursor() as cursor:
         cursor.execute("SELECT 1")
+
+    # Check storage bucket
+    bucket = storage.create_storage_bucket_client(os.environ["STORAGE_BUCKET"])
+    bucket.health()
+
+    # OK
     return JsonResponse({"status": "OK"})
 
 

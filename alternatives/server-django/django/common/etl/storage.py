@@ -39,6 +39,9 @@ class StorageBucket:
         self.key1 = key1
         self.key2 = key2
 
+    def health(self):
+        raise Exception("health not implemented")
+
     def list_objects(self, file_path_prefix):
         raise Exception("list_objects not implemented")
 
@@ -67,6 +70,10 @@ class AzureStorageBucket(StorageBucket):
         self.container_client = self.blob_service.get_container_client(
             bucket_name
         )
+
+    def health(self):
+        if not self.container_client.exists():
+            raise Exception("Azure storage container does not exist")
 
     def list_objects(self, file_path_prefix):
         objects = []
@@ -155,6 +162,9 @@ class S3StorageBucket(StorageBucket):
                 endpoint_url="http://" + endpoint,
                 use_ssl=False,
             )
+
+    def health(self):
+        self.client.head_bucket(Bucket=self.bucket_name)
 
     def list_objects(self, file_path_prefix):
         objects = []

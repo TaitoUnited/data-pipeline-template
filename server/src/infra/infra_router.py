@@ -1,6 +1,8 @@
+import os
 from flask import Blueprint, current_app
 from flasgger.utils import swag_from
 from src.common.setup import db
+from src.common.etl import storage
 
 
 bp = Blueprint("infra", __name__)
@@ -30,5 +32,10 @@ def get_healtz():
 @swag_from("./swagger/infra_uptimez.yaml")
 def get_uptimez():
     """Polled by uptime monitor to check that the system is alive."""
+    # Check database
     db.execute("SELECT 1")
+    # Check storage bucket
+    bucket = storage.create_storage_bucket_client(os.environ["STORAGE_BUCKET"])
+    bucket.health()
+    # OK
     return {"status": "OK"}
