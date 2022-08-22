@@ -17,7 +17,7 @@ def get_app():
     return msal.ConfidentialClientApplication(
         get_secret_value("POWERBI_CLIENT_ID"),
         client_credential=get_secret_value("POWERBI_CLIENT_SECRET"),
-        authority=os.environ["POWERBI_AUTHORITY_URI"],
+        authority=os.environ.get("POWERBI_AUTHORITY_URI"),
     )
 
 

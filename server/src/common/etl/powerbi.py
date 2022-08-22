@@ -4,8 +4,8 @@ import pandas as pd
 import requests
 import sys
 import time
-from src.common.utils.misc import get_secret_value
-from src.common.utils.validate import validate_is_one_word
+from common.utils.misc import get_secret_value
+from common.utils.validate import validate_is_one_word
 
 
 # -------------------------------------------------------
@@ -17,7 +17,7 @@ def get_app():
     return msal.ConfidentialClientApplication(
         get_secret_value("POWERBI_CLIENT_ID"),
         client_credential=get_secret_value("POWERBI_CLIENT_SECRET"),
-        authority=os.environ["POWERBI_AUTHORITY_URI"],
+        authority=os.environ.get("POWERBI_AUTHORITY_URI"),
     )
 
 

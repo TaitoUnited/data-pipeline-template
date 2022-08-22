@@ -15,9 +15,9 @@ from azure.storage.queue import TextBase64EncodePolicy
 # Create storage bucket client
 def create_storage_bucket_client(
     bucket_name,
-    bucket_type=os.environ["STORAGE_TYPE"],
-    key1=os.environ["STORAGE_ACCESS_KEY"],
-    key2=os.environ["STORAGE_SECRET_KEY"],
+    bucket_type=os.environ.get("STORAGE_TYPE", "s3"),
+    key1=os.environ.get("STORAGE_ACCESS_KEY"),
+    key2=os.environ.get("STORAGE_SECRET_KEY"),
     endpoint=os.environ.get("STORAGE_ENDPOINT"),
 ):
     if bucket_type == "azure":
