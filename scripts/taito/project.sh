@@ -66,15 +66,14 @@ taito_secrets="
 
 # Secrets for local environment only
 taito_local_secrets="
-  $taito_project-$taito_env-storage.secretKey:random
+  $taito_project-$taito_env-storage.accessKeyId:manual
+  $taito_project-$taito_env-storage.secretKey:manual
 "
 
 # Secrets for non-local environments
 # TODO: remove s3proxy secret if not Azure
 taito_remote_secrets="
   $taito_project-$taito_env-basic-auth.auth:htpasswd-plain
-  $taito_project-$taito_env-storage.accessKeyId:manual
-  $taito_project-$taito_env-storage.secretKey:manual
   $taito_project-$taito_env-s3proxy.accessKeyId:random
   $taito_project-$taito_env-s3proxy.secretKey:random
   $db_database_viewer_secret:random

@@ -65,9 +65,11 @@ services:
       DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
       STORAGE_TYPE: s3
       STORAGE_ENDPOINT: data-pipeline-template-storage:9000
+      # STORAGE_ENDPOINT: data-pipeline-template-storage-dev:80 # For accessing dev environment storage
       STORAGE_ACCESS_KEY: minio
       STORAGE_SECRET_KEY: ${taito_default_password} # TODO: use secrets
       STORAGE_BUCKET: bucket
+      # STORAGE_BUCKET: data-pipeline-template-dev # For accessing dev environment storage
 
   # "LAB: Jupyter Lab"
 
@@ -242,6 +244,25 @@ services:
       # Subpath not yet supported: https://github.com/minio/minio/issues/12727
       # MINIO_BROWSER_REDIRECT_URL: http://localhost:9999/minio
 
+  # For accessing dev environment storage
+  # data-pipeline-template-storage-dev:
+  #   container_name: data-pipeline-template-storage-dev
+  #   image: andrewgaul/s3proxy
+  #   restart: unless-stopped
+  #   networks:
+  #     - default
+  #   ports:
+  #     - "80"
+  #   entrypoint: sh -c "JCLOUDS_IDENTITY=$$(cat /run/secrets/JCLOUDS_IDENTITY) JCLOUDS_CREDENTIAL=$$(cat /run/secrets/JCLOUDS_CREDENTIAL) /opt/s3proxy/run-docker-container.sh"
+  #   secrets:
+  #     - JCLOUDS_IDENTITY
+  #     - JCLOUDS_CREDENTIAL
+  #   environment:
+  #     S3PROXY_IDENTITY: minio
+  #     S3PROXY_CREDENTIAL: ${taito_default_password}
+  #     JCLOUDS_PROVIDER: azureblob
+  #     JCLOUDS_ENDPOINT: https://datapipelinetemplatedev.blob.core.windows.net
+
 secrets:
   DATABASE_PASSWORD:
     file: ./secrets/${taito_env}/${db_database_app_secret}
@@ -253,6 +274,10 @@ secrets:
     file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKey
   API_KEY_ETL:
     file: ./secrets/${taito_env}/${taito_project}-${taito_env}-api.apiKeyEtl
+  JCLOUDS_IDENTITY: # For accessing dev environment storage
+    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-storage.accessKeyId
+  JCLOUDS_CREDENTIAL: # For accessing dev environment storage
+    file: ./secrets/${taito_env}/${taito_project}-${taito_env}-storage.secretKey
 
 networks:
   default:
