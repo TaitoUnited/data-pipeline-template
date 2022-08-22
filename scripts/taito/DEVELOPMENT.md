@@ -121,6 +121,7 @@ The commands mentioned above work also for server environments (`f-NAME`, `dev`,
     taito logs:server:dev                   # Tail logs of server container
     taito open logs:dev                     # Open logs on browser
     taito open storage:dev                  # Open storage bucket on browser
+    taito manage:dev COMMAND                # Run Django manage command
     taito shell:server:dev                  # Start a shell on server container
     taito test:dev                          # Run integration and e2e tests
     taito init:dev --clean                  # Clean reinit for dev environment
