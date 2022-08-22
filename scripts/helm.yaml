@@ -145,3 +145,4 @@ full-stack:
         JCLOUDS_CREDENTIAL: ${taito_project}-${taito_env}-storage.secretKey # For Azure
       env: # For Azure
         JCLOUDS_PROVIDER: azureblob # For Azure
+        JCLOUDS_ENDPOINT: https://TODO_PROJECT_WITHOUT_HYPHEN${taito_env}.blob.core.windows.net # For Azure
