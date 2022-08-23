@@ -57,7 +57,7 @@ db_bidb_default_secret="${db_bidb_mgr_secret}"
 
 # Secrets for all environments
 taito_secrets="
-  $db_database_app_secret:random
+  $db_database_app_secret:manual
   $db_bidb_app_secret:random
   $taito_project-$taito_env-django.secretKey:random-50
   $taito_project-$taito_env-api.apiKey:random-50

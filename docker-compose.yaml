@@ -32,6 +32,7 @@ services:
       - "./server:/develop:delegated"
     tty: true
     secrets:
+      - DATABASE_PASSWORD
       - DJANGO_SECRET_KEY
       - API_KEY
       - API_KEY_ETL
@@ -52,24 +53,26 @@ services:
       COMMON_LOG_LEVEL: info      # trace, debug, info, warn, error, fatal
       COMMON_ENV: local
       # Services
-      SENTRY_DSN: #sentryDSN
-      DATABASE_HOST: data-pipeline-template-database
       DATABASE_PORT: ${db_database_port}
-      DATABASE_NAME: ${db_database_name}
-      DATABASE_USER: ${db_database_app_username}
-      DATABASE_PASSWORD: ${taito_default_password} # TODO: use secrets
       DATABASE_POOL_MIN: '1'
       DATABASE_POOL_MAX: '10'
-      DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
-      DATABASE_SSL_CLIENT_CERT_ENABLED: "${db_database_ssl_client_cert_enabled}"
-      DATABASE_SSL_SERVER_CERT_ENABLED: "${db_database_ssl_server_cert_enabled}"
+      # For accessing local environment database
+      DATABASE_HOST: data-pipeline-template-database
+      DATABASE_NAME: ${db_database_name}
+      DATABASE_USER: ${db_database_app_username}
+      # For accessing dev environment database
+      # DATABASE_HOST: data-pipeline-template-database-dev
+      # DATABASE_NAME: data_pipeline_template_dev
+      # DATABASE_USER: data_pipeline_template_dev_app@TODO
       STORAGE_TYPE: s3
-      STORAGE_ENDPOINT: data-pipeline-template-storage:9000
-      # STORAGE_ENDPOINT: data-pipeline-template-storage-dev:80 # For accessing dev environment storage
       STORAGE_ACCESS_KEY: minio
       STORAGE_SECRET_KEY: ${taito_default_password} # TODO: use secrets
+      # For accessing local environment storage
+      STORAGE_ENDPOINT: data-pipeline-template-storage:9000
       STORAGE_BUCKET: bucket
-      # STORAGE_BUCKET: data-pipeline-template-dev # For accessing dev environment storage
+      # For accessing dev environment storage
+      # STORAGE_ENDPOINT: data-pipeline-template-storage-dev:80
+      # STORAGE_BUCKET: data-pipeline-template-dev
 
   # "LAB: Jupyter Lab"
 
@@ -224,6 +227,27 @@ services:
       BIDB_PASSWORD_FILE: /run/secrets/BIDB_DATABASE_PASSWORD
     volumes:
       - "./database:/docker-entrypoint-initdb.d:delegated"
+
+  data-pipeline-template-database-dev:
+    container_name: data-pipeline-template-database-dev
+    image: ${taito_image:-ghcr.io/taitounited/taito-cli:latest}
+    restart: unless-stopped
+    entrypoint: /bin/sh -c "cd /project && taito db-proxy:dev 5432"
+    user: taito
+    networks:
+      - default
+    ports:
+      - "127.0.0.1:7587:5432"
+    volumes:
+      - ".:/project:delegated"
+      # Mount cloud credentials for db proxy
+      - "${HOME}/.aws:/home/taito/.aws"
+      - "${HOME}/.azure:/home/taito/.azure"
+      - "${HOME}/.config/doctl:/home/taito/.config/doctl"
+      - "${HOME}/.config/gcloud:/home/taito/.config/gcloud"
+      - "${HOME}/.kube:/home/taito/.kube"
+    environment:
+      taito_docker: 'true'
 
   data-pipeline-template-storage:
     container_name: data-pipeline-template-storage
