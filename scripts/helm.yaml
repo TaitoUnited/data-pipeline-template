@@ -81,7 +81,7 @@ full-stack:
         DATABASE_HOST: "${db_database_real_host}"
         DATABASE_PORT: "${db_database_real_port}"
         DATABASE_NAME: ${db_database_name}
-        DATABASE_USER: ${db_database_app_username}
+        DATABASE_USER: ${db_database_app_username} # NOTE: mgr user required for django migrations
         DATABASE_POOL_MIN: "0"
         DATABASE_POOL_MAX: "5"
         DATABASE_SSL_ENABLED: "${db_database_ssl_enabled}"
