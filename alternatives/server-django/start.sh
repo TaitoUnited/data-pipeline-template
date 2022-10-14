@@ -1,10 +1,6 @@
 #!/bin/sh
 set -e
 
-# Read db password from env variable or secret file
-export DATABASE_PASSWORD_SECRET="$(cat /run/secrets/DATABASE_PASSWORD)"
-export DATABASE_PASSWORD=${DATABASE_PASSWORD:-$DATABASE_PASSWORD_SECRET}
-
 cd django
 
 if [ ${PYTHON_ENV} = "development" ]; then

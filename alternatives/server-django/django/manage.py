@@ -3,10 +3,18 @@
 import os
 import sys
 
+def read_secret(name):
+    with open("/run/secrets/" + name, "r") as f:
+        value = f.readline()        
+    return value
+
+def set_environ_secret(name):
+    os.environ.setdefault(name, read_secret(name))
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
+    set_environ_secret("DATABASE_PASSWORD")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
