@@ -3,13 +3,19 @@
 import os
 import sys
 
+
 def read_secret(name):
     with open("/run/secrets/" + name, "r") as f:
-        value = f.readline()        
+        value = f.readline()
     return value
 
+
 def set_environ_secret(name):
-    os.environ.setdefault(name, read_secret(name))
+    try:
+        os.environ.setdefault(name, read_secret(name))
+    except os.OSError:
+        os.environ.setdefault(os.environ.get(name))
+
 
 def main():
     """Run administrative tasks."""
