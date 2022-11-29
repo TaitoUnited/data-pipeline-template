@@ -48,7 +48,7 @@ services:
       # Common variables
       COMMON_COMPANY: companyname
       COMMON_PROJECT: full-stack-template
-      COMMON_DEBUG: 'false'
+      COMMON_DEBUG: 'true'
       COMMON_LOG_FORMAT: text
       COMMON_LOG_LEVEL: info      # trace, debug, info, warn, error, fatal
       COMMON_ENV: local
