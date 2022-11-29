@@ -3,7 +3,6 @@ django
 djangorestframework
 django-cors-headers
 django-extensions
-werkzeug
 JSON-log-formatter
 
 # ETL

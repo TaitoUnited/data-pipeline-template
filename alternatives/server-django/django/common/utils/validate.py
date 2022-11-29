@@ -1,4 +1,4 @@
-from werkzeug.exceptions import Forbidden, BadRequest, InternalServerError
+from django.core.exceptions import PermissionDenied, BadRequest
 
 
 def validate_api_key(request, *api_keys):
@@ -7,23 +7,23 @@ def validate_api_key(request, *api_keys):
     api_key query parameter.
     """
     if not api_keys:
-        raise InternalServerError("API KEY configuration error")
+        raise Exception("API KEY configuration error")
 
     value = request.headers.get("x-api-key") or request.query_params.get(
         "api_key"
     )
     if not value:
-        raise Forbidden("API KEY not given")
+        raise PermissionDenied("API KEY not given")
 
     found = False
     for key in api_keys:
         if not key:
-            raise InternalServerError("API KEY configuration error")
+            raise Exception("API KEY configuration error")
         if key == value:
             found = True
 
     if not found:
-        raise Forbidden("Invalid API KEY")
+        raise PermissionDenied("Invalid API KEY")
 
 
 def validate_is_one_word(value):
