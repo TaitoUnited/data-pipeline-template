@@ -73,7 +73,7 @@ class Config:
     # Logging
     COMMON_LOG_LEVEL = _config["COMMON_LOG_LEVEL"]
     COMMON_LOG_FORMAT = _config["COMMON_LOG_FORMAT"]
-    DEBUG = bool(_config["COMMON_DEBUG"])
+    DEBUG = _config["COMMON_DEBUG"] == "true"
 
     # Testing
     TESTING = False
