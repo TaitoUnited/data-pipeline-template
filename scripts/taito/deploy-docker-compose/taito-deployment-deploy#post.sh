@@ -126,18 +126,18 @@ ssh ${ssh_opts} "${taito_ssh_user}@${taito_host}" "
     echo
     echo [Pull container images using the new configuration]
     echo NOTE: Pulling of local-only images will print an error! This is OK.
-    docker-compose -f docker-compose-remote.yaml pull || :
+    docker compose -f docker-compose-remote.yaml pull || :
     echo
     if [[ -f docker-compose.yaml ]]; then
-      echo [Stop docker-compose using the old configuration]
+      echo [Stop docker compose using the old configuration]
       echo NOTE: Pulling of local-only images will print an error! This is OK.
-      docker-compose stop || :
+      docker compose stop || :
       mv -f docker-compose.yaml docker-compose-previous.yaml
       echo
     fi
-    echo [Start docker-compose using the new configuration]
+    echo [Start docker compose using the new configuration]
     mv -f docker-compose-remote.yaml docker-compose.yaml
-    docker-compose up -d
+    docker compose up -d
   '
 " || (
   echo "Recent commits in ${taito_branch} branch:"

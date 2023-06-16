@@ -98,7 +98,7 @@ jobs:
       # Deploy changes to target environment
       # TODO: Put "taito db deploy" back once this has been resolved: https://github.com/npm/rfcs/issues/546
       # - run: taito db deploy:$BRANCH
-      - run: export taito_target_env=${BRANCH/master/prod} && . ./taito-config.sh && taito secret export:${taito_target_env} ${taito_project} && docker-compose -f docker-compose-cicd.yaml run --rm ${taito_project}-server-cicd sh -c 'echo Sleeping... && sleep 30 && echo Done sleeping && python src/manage.py migrate'
+      - run: export taito_target_env=${BRANCH/master/prod} && . ./taito-config.sh && taito secret export:${taito_target_env} ${taito_project} && docker compose -f docker-compose-cicd.yaml run --rm ${taito_project}-server-cicd sh -c 'echo Sleeping... && sleep 30 && echo Done sleeping && python src/manage.py migrate'
         shell: bash
       - run: taito deployment deploy:$BRANCH $IMAGE_TAG
 
